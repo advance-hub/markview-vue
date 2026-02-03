@@ -1,0 +1,109 @@
+<template>
+  <div class="md-table">
+    <BlockHeader label="表格" copyable @copy="handleCopy" />
+    <div class="md-table__body" ref="tableRef">
+      <table>
+        <slot />
+      </table>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import BlockHeader from './BlockHeader.vue';
+import { toast } from '../base';
+import { copyToClipboard } from '../utils';
+
+const tableRef = ref<HTMLElement>();
+
+async function handleCopy() {
+  if (!tableRef.value) return;
+  
+  const table = tableRef.value.querySelector('table');
+  if (!table) return;
+  
+  const rows = Array.from(table.querySelectorAll('tr'));
+  const text = rows.map(row => {
+    const cells = Array.from(row.querySelectorAll('th, td'));
+    return cells.map(cell => cell.textContent?.trim() || '').join('\t');
+  }).join('\n');
+  
+  const success = await copyToClipboard(text);
+  if (success) {
+    toast.success('复制成功');
+  } else {
+    toast.error('复制失败');
+  }
+}
+</script>
+
+<style scoped lang="scss">
+@import '../styles/tokens.scss';
+
+.md-table {
+  border-radius: $md-table-radius;
+  overflow: hidden;
+
+  &__body {
+    overflow-x: auto;
+    background: var(--#{$md-prefix}-table-bg, #{$md-table-bg});
+    border: 1px solid var(--#{$md-prefix}-table-border, #{$md-table-border});
+    border-top: none;
+    border-radius: 0 0 $radius-xl $radius-xl;
+
+    &::-webkit-scrollbar {
+      height: $md-scrollbar-height;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: $md-scrollbar-thumb-bg;
+      border-radius: $md-scrollbar-radius;
+      
+      &:hover {
+        background: $md-scrollbar-thumb-hover-bg;
+      }
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: $md-scrollbar-track-bg;
+    }
+  }
+}
+
+:deep(table) {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+  font-size: $md-table-font-size;
+  line-height: $md-table-line-height;
+
+  th, td {
+    padding: $md-table-cell-padding;
+    text-align: left;
+    border-bottom: 1px solid var(--#{$md-prefix}-table-border, #{$md-table-border});
+    color: var(--#{$md-prefix}-color-text);
+
+    &:not(:last-child) {
+      border-right: 1px solid var(--#{$md-prefix}-table-border, #{$md-table-border});
+    }
+  }
+
+  thead th {
+    font-weight: $md-table-th-font-weight;
+    font-size: $md-table-th-font-size;
+    background: var(--#{$md-prefix}-table-header-bg, #{$md-table-th-bg});
+    color: var(--#{$md-prefix}-color-text);
+  }
+
+  tbody {
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: var(--#{$md-prefix}-table-hover-bg, #{$md-table-row-hover-bg});
+    }
+  }
+}
+</style>

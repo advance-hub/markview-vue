@@ -1,0 +1,580 @@
+// Markdown 渲染器 - 主样式
+
+@import './tokens.scss';
+
+.#{$md-prefix}-render {
+  // 基础排版
+  color: $md-p-color;
+  font-size: $md-p-font-size;
+  line-height: $md-p-line-height;
+  font-family: $font-family-sans;
+  word-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  // 容器
+  max-width: $md-container-max-width;
+  margin: 0 auto;
+  padding: $md-container-padding-y $md-container-padding-x;
+  background-color: $md-container-bg;
+  border-radius: $md-container-radius;
+  box-shadow: $md-container-shadow;
+  min-height: 400px;
+
+  // 标题通用样式
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: $font-weight-semibold;
+    color: var(--#{$md-prefix}-color-text);
+    scroll-margin-top: 80px;
+    
+    &:first-child {
+      margin-top: 0 !important;
+    }
+    
+    + p {
+      margin-top: 0;
+    }
+  }
+
+  h1 {
+    font-size: $md-h1-font-size;
+    font-weight: $md-h1-font-weight;
+    line-height: $md-h1-line-height;
+    margin-top: $md-h1-margin-top;
+    margin-bottom: $md-h1-margin-bottom;
+    letter-spacing: $md-h1-letter-spacing;
+    color: $md-h1-color;
+  }
+
+  h2 {
+    font-size: $md-h2-font-size;
+    font-weight: $md-h2-font-weight;
+    line-height: $md-h2-line-height;
+    margin-top: $md-h2-margin-top;
+    margin-bottom: $md-h2-margin-bottom;
+    letter-spacing: $md-h2-letter-spacing;
+    color: $md-h2-color;
+  }
+
+  h3 {
+    font-size: $md-h3-font-size;
+    font-weight: $md-h3-font-weight;
+    line-height: $md-h3-line-height;
+    margin-top: $md-h3-margin-top;
+    margin-bottom: $md-h3-margin-bottom;
+    color: $md-h3-color;
+  }
+
+  h4 {
+    font-size: $md-h4-font-size;
+    font-weight: $md-h4-font-weight;
+    line-height: $md-h4-line-height;
+    margin-top: $md-h4-margin-top;
+    margin-bottom: $md-h4-margin-bottom;
+    color: $md-h4-color;
+  }
+
+  h5 {
+    font-size: $md-h5-font-size;
+    font-weight: $md-h5-font-weight;
+    line-height: $md-h5-line-height;
+    margin-top: $md-h5-margin-top;
+    margin-bottom: $md-h5-margin-bottom;
+    color: $md-h5-color;
+  }
+
+  h6 {
+    font-size: $md-h6-font-size;
+    font-weight: $md-h6-font-weight;
+    line-height: $md-h6-line-height;
+    margin-top: $md-h6-margin-top;
+    margin-bottom: $md-h6-margin-bottom;
+    color: $md-h6-color;
+  }
+
+  // 段落
+  p {
+    margin: 0 0 $md-p-margin-bottom 0;
+    color: $md-p-color;
+    line-height: $md-p-line-height;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // 链接
+  a {
+    color: $md-link-color;
+    text-decoration: $md-link-text-decoration;
+    font-weight: $md-link-font-weight;
+    transition: color $transition-base;
+
+    &:hover {
+      color: $md-link-hover-color;
+      text-decoration: $md-link-hover-text-decoration;
+    }
+  }
+
+  // 列表
+  ul, ol {
+    margin: $md-list-margin-top 0 $md-list-margin-bottom 0;
+    padding-left: $md-list-padding-left;
+    color: $md-list-color;
+    line-height: $md-list-line-height;
+
+    li {
+      margin: 0 0 $md-list-item-margin-bottom 0;
+      line-height: $md-list-line-height;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    ul, ol {
+      padding-left: $md-list-nested-padding-left;
+      margin: $md-list-nested-margin;
+    }
+  }
+
+  ul {
+    list-style-type: disc;
+    
+    ul {
+      list-style-type: circle;
+      
+      ul {
+        list-style-type: square;
+      }
+    }
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  // 引用块基础样式
+  blockquote {
+    margin: $md-quote-margin;
+    padding: $md-quote-padding;
+    color: $md-quote-color;
+    font-size: $md-quote-font-size;
+    line-height: $md-quote-line-height;
+    background: $md-quote-info-bg;
+    border-left: $md-quote-border-left-width solid $md-quote-info-border;
+    border-radius: $md-quote-border-radius;
+
+    > *:first-child {
+      margin-top: 0;
+    }
+
+    > *:last-child {
+      margin-bottom: 0;
+    }
+
+    p {
+      margin-bottom: $spacing-2;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // 行内代码
+  code:not(pre code) {
+    padding: $md-code-inline-padding;
+    margin: $md-code-inline-margin;
+    font-size: $md-code-inline-font-size;
+    font-family: $md-code-inline-font-family;
+    font-weight: $md-code-inline-font-weight;
+    color: $md-code-inline-color;
+    background-color: $md-code-inline-bg;
+    border: 1px solid $md-code-inline-border;
+    border-radius: $md-code-inline-radius;
+  }
+
+  // 代码块基础样式
+  pre {
+    margin: $md-code-block-margin;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: $md-code-block-radius;
+    overflow: hidden;
+
+    code {
+      display: block;
+      padding: $md-code-body-padding;
+      font-family: $md-code-font-family;
+      font-size: $md-code-font-size;
+      line-height: $md-code-line-height;
+      color: $md-code-color;
+      background: $md-code-body-bg;
+      white-space: pre;
+      tab-size: $md-code-tab-size;
+      overflow-x: auto;
+      border: 1px solid $md-code-body-border;
+      border-radius: $md-code-block-radius;
+    }
+  }
+
+  // 表格基础样式
+  table {
+    width: 100%;
+    margin: $md-table-margin;
+    border-spacing: 0;
+    border-collapse: collapse;
+    font-size: $md-table-font-size;
+    line-height: $md-table-line-height;
+    background: $md-table-bg;
+    border: 1px solid $md-table-border;
+    border-radius: $md-table-radius;
+    overflow: hidden;
+
+    th, td {
+      padding: $md-table-cell-padding;
+      text-align: left;
+      border-bottom: 1px solid $md-table-border;
+      color: $md-table-color;
+
+      &:not(:last-child) {
+        border-right: 1px solid $md-table-border;
+      }
+    }
+
+    th {
+      font-weight: $md-table-th-font-weight;
+      font-size: $md-table-th-font-size;
+      color: $md-table-th-color;
+      background: $md-table-th-bg;
+    }
+
+    tbody tr {
+      transition: background-color $transition-fast;
+
+      &:last-child td {
+        border-bottom: none;
+      }
+
+      &:hover td {
+        background: $md-table-row-hover-bg;
+      }
+    }
+  }
+
+  // 图片
+  img {
+    max-width: $md-image-max-width;
+    height: auto;
+    border-radius: $md-image-radius;
+    box-shadow: $md-image-shadow;
+    transition: box-shadow $md-image-transition;
+
+    &:hover {
+      box-shadow: $md-image-shadow-hover;
+    }
+  }
+
+  figure {
+    margin: $md-image-margin;
+    text-align: center;
+
+    img {
+      margin: 0 auto;
+    }
+
+    figcaption {
+      margin-top: $md-image-caption-margin-top;
+      font-size: $md-image-caption-font-size;
+      color: $md-image-caption-color;
+      text-align: $md-image-caption-text-align;
+    }
+  }
+
+  // 分割线
+  hr {
+    height: $md-hr-height;
+    margin: $md-hr-margin;
+    border: none;
+    background: $md-hr-bg;
+  }
+
+  // 文本修饰
+  strong, b {
+    font-weight: $font-weight-semibold;
+    color: var(--#{$md-prefix}-color-text);
+  }
+
+  em, i {
+    font-style: italic;
+  }
+
+  del, s {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  mark {
+    padding: 2px 4px;
+    background: rgba(255, 235, 59, 0.4);
+    border-radius: $radius-sm;
+  }
+
+  // 任务列表
+  ul.task-list {
+    list-style: none;
+    padding-left: 0;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: $spacing-2;
+
+      input[type="checkbox"] {
+        margin-top: 4px;
+        width: 16px;
+        height: 16px;
+        accent-color: var(--#{$md-prefix}-color-link);
+      }
+    }
+  }
+
+  // 脚注
+  .footnotes {
+    margin-top: $spacing-8;
+    padding-top: $spacing-4;
+    border-top: 1px solid var(--#{$md-prefix}-color-border);
+    font-size: $font-size-sm;
+    color: var(--#{$md-prefix}-color-text-secondary);
+  }
+
+  // 移动端适配
+  @media (max-width: $md-mobile-breakpoint) {
+    font-size: $md-mobile-font-size;
+    line-height: $line-height-normal;
+    padding: $md-container-padding-y-mobile $md-container-padding-x-mobile;
+    border-radius: $radius-lg;
+    max-width: 100%;
+
+    h1 {
+      font-size: $md-mobile-h1-font-size;
+      line-height: $line-height-snug;
+      margin-top: $spacing-6;
+      margin-bottom: $spacing-5;
+    }
+
+    h2 {
+      font-size: $md-mobile-h2-font-size;
+      line-height: $line-height-snug;
+      margin-top: $spacing-5;
+      margin-bottom: $spacing-4;
+    }
+
+    h3 {
+      font-size: $md-mobile-h3-font-size;
+      line-height: $line-height-normal;
+      margin-top: $spacing-4;
+      margin-bottom: $spacing-3;
+    }
+
+    h4 {
+      font-size: $md-mobile-h4-font-size;
+      margin-top: $spacing-4;
+      margin-bottom: $spacing-3;
+    }
+
+    h5 {
+      font-size: $md-mobile-h5-font-size;
+      margin-top: $spacing-3;
+      margin-bottom: $spacing-2;
+    }
+
+    h6 {
+      font-size: $md-mobile-h6-font-size;
+      margin-top: $spacing-3;
+      margin-bottom: $spacing-2;
+    }
+
+    p {
+      margin-bottom: $spacing-3;
+    }
+
+    ul, ol {
+      padding-left: $spacing-5;
+      margin: $spacing-2 0 $spacing-3 0;
+
+      li {
+        margin-bottom: $spacing-2;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: $spacing-5 $spacing-4;
+  }
+}
+
+// Shiki 代码高亮兼容
+.shiki {
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+.md-render table {
+  margin: 0;
+  border-radius: 0;
+}
+
+// ========================================
+// TOC 目录样式
+// ========================================
+.#{$md-prefix}-render-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.#{$md-prefix}-render-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.#{$md-prefix}-render-toc {
+  position: sticky;
+  top: 24px;
+  flex-shrink: 0;
+  width: 200px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+
+.#{$md-prefix}-render-toc-inner {
+  padding: 16px;
+  background: var(--#{$md-prefix}-toc-bg, #{$gray-50});
+  border-radius: $radius-lg;
+  border: 1px solid var(--#{$md-prefix}-toc-border, #{$gray-200});
+}
+
+.#{$md-prefix}-render-toc-title {
+  font-size: 12px;
+  font-weight: $font-weight-semibold;
+  color: var(--#{$md-prefix}-toc-title-color, #{$gray-500});
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--#{$md-prefix}-toc-border, #{$gray-200});
+}
+
+.#{$md-prefix}-render-toc-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.#{$md-prefix}-render-toc-item {
+  display: block;
+  padding: 6px 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--#{$md-prefix}-toc-item-color, #{$gray-500});
+  text-decoration: none;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+  border-left: 2px solid transparent;
+  margin-left: -2px;
+
+  &:hover {
+    color: var(--#{$md-prefix}-toc-item-hover-color, #{$gray-700});
+    background: var(--#{$md-prefix}-toc-item-hover-bg, #{$gray-100});
+  }
+
+  &.active {
+    color: var(--#{$md-prefix}-color-link);
+    background: rgba($blue-500, 0.08);
+    border-left-color: var(--#{$md-prefix}-color-link);
+    font-weight: $font-weight-medium;
+  }
+}
+
+// TOC 层级缩进
+.#{$md-prefix}-render-toc-level-2 {
+  padding-left: 8px;
+}
+
+.#{$md-prefix}-render-toc-level-3 {
+  padding-left: 20px;
+  font-size: 12px;
+}
+
+.#{$md-prefix}-render-toc-level-4 {
+  padding-left: 32px;
+  font-size: 12px;
+}
+
+// ========================================
+// 回到顶部按钮
+// ========================================
+.#{$md-prefix}-render-back-top {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--#{$md-prefix}-back-top-bg, #ffffff);
+  border: 1px solid var(--#{$md-prefix}-back-top-border, #{$gray-200});
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--#{$md-prefix}-back-top-color, #{$gray-500});
+  transition: all $transition-base;
+  z-index: 100;
+
+  &:hover {
+    color: var(--#{$md-prefix}-color-link);
+    border-color: var(--#{$md-prefix}-color-link);
+    box-shadow: 0 6px 16px rgba($blue-500, 0.2);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// 回到顶部过渡动画
+.md-fade-enter-active,
+.md-fade-leave-active {
+  transition: opacity $transition-base, transform $transition-base;
+}
+
+.md-fade-enter-from,
+.md-fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+// ========================================
+// 响应式
+// ========================================
+@media (max-width: 1024px) {
+  .#{$md-prefix}-render-toc {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .#{$md-prefix}-render-back-top {
+    bottom: 24px;
+    right: 24px;
+    width: 40px;
+    height: 40px;
+  }
+}

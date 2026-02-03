@@ -1,0 +1,300 @@
+// Markdown 渲染器 - 设计令牌
+// 组件级别的样式配置
+
+@import './variables.scss';
+
+// CSS 自定义属性 - 亮色主题 (默认)
+:root,
+[data-theme="light"],
+.md-render--light {
+  --#{$md-prefix}-color-text: #{$color-text-primary};
+  --#{$md-prefix}-color-text-secondary: #{$color-text-secondary};
+  --#{$md-prefix}-color-text-tertiary: #{$color-text-tertiary};
+  --#{$md-prefix}-color-text-quaternary: #{$color-text-quaternary};
+  --#{$md-prefix}-color-bg: #{$color-bg-container};
+  --#{$md-prefix}-color-bg-elevated: #{$color-bg-elevated};
+  --#{$md-prefix}-color-bg-spotlight: #{$color-bg-spotlight};
+  --#{$md-prefix}-color-border: #{$color-border-primary};
+  --#{$md-prefix}-color-border-secondary: #{$color-border-secondary};
+  --#{$md-prefix}-color-link: #{$color-link};
+  --#{$md-prefix}-color-link-hover: #{$color-link-hover};
+  --#{$md-prefix}-color-success: #{$color-success};
+  --#{$md-prefix}-color-warning: #{$color-warning};
+  --#{$md-prefix}-color-danger: #{$color-danger};
+  --#{$md-prefix}-color-info: #{$color-info};
+  
+  // 代码块
+  --#{$md-prefix}-code-header-bg: #f0f0f2;
+  --#{$md-prefix}-code-body-bg: rgba(17, 17, 51, 0.02);
+  --#{$md-prefix}-code-border: #e5e5e5;
+  
+  // 表格
+  --#{$md-prefix}-table-bg: #ffffff;
+  --#{$md-prefix}-table-header-bg: rgba(17, 17, 51, 0.02);
+  --#{$md-prefix}-table-border: #e5e5e5;
+  --#{$md-prefix}-table-hover-bg: rgba(17, 17, 51, 0.02);
+}
+
+// CSS 自定义属性 - 暗黑主题
+[data-theme="dark"],
+.md-render--dark {
+  --#{$md-prefix}-color-text: #e5e5e5;
+  --#{$md-prefix}-color-text-secondary: #a3a3a3;
+  --#{$md-prefix}-color-text-tertiary: #737373;
+  --#{$md-prefix}-color-text-quaternary: #525252;
+  --#{$md-prefix}-color-bg: #1c1c1e;
+  --#{$md-prefix}-color-bg-elevated: #2c2c2e;
+  --#{$md-prefix}-color-bg-spotlight: #3a3a3c;
+  --#{$md-prefix}-color-border: #3a3a3c;
+  --#{$md-prefix}-color-border-secondary: #2c2c2e;
+  --#{$md-prefix}-color-link: #60a5fa;
+  --#{$md-prefix}-color-link-hover: #93c5fd;
+  --#{$md-prefix}-color-success: #34d399;
+  --#{$md-prefix}-color-warning: #fbbf24;
+  --#{$md-prefix}-color-danger: #f87171;
+  --#{$md-prefix}-color-info: #60a5fa;
+  
+  // 代码块 - 暗黑
+  --#{$md-prefix}-code-header-bg: #2c2c2e;
+  --#{$md-prefix}-code-body-bg: #1c1c1e;
+  --#{$md-prefix}-code-border: #3a3a3c;
+  
+  // 表格 - 暗黑
+  --#{$md-prefix}-table-bg: #1c1c1e;
+  --#{$md-prefix}-table-header-bg: #2c2c2e;
+  --#{$md-prefix}-table-border: #3a3a3c;
+  --#{$md-prefix}-table-hover-bg: #2c2c2e;
+  
+  // TOC 目录 - 暗黑
+  --#{$md-prefix}-toc-bg: #2c2c2e;
+  --#{$md-prefix}-toc-border: #3a3a3c;
+  --#{$md-prefix}-toc-title-color: #a3a3a3;
+  --#{$md-prefix}-toc-item-color: #a3a3a3;
+  --#{$md-prefix}-toc-item-hover-color: #e5e5e5;
+  --#{$md-prefix}-toc-item-hover-bg: #3a3a3c;
+  
+  // 回到顶部 - 暗黑
+  --#{$md-prefix}-back-top-bg: #2c2c2e;
+  --#{$md-prefix}-back-top-border: #3a3a3c;
+  --#{$md-prefix}-back-top-color: #a3a3a3;
+}
+
+// 容器
+$md-container-max-width: $content-width-wide;
+$md-container-padding-x: $spacing-10;
+$md-container-padding-y: $spacing-8;
+$md-container-padding-x-mobile: $spacing-5;
+$md-container-padding-y-mobile: $spacing-6;
+$md-container-bg: var(--#{$md-prefix}-color-bg);
+$md-container-radius: $radius-lg;
+$md-container-shadow: $shadow-xs;
+
+// 标题 H1
+$md-h1-font-size: $font-size-5xl;
+$md-h1-line-height: $line-height-tight;
+$md-h1-font-weight: $font-weight-bold;
+$md-h1-margin-top: $spacing-8;
+$md-h1-margin-bottom: $spacing-6;
+$md-h1-letter-spacing: $letter-spacing-tight;
+$md-h1-color: var(--#{$md-prefix}-color-text);
+
+// 标题 H2
+$md-h2-font-size: $font-size-3xl;
+$md-h2-line-height: $line-height-snug;
+$md-h2-font-weight: $font-weight-semibold;
+$md-h2-margin-top: $spacing-8;
+$md-h2-margin-bottom: $spacing-5;
+$md-h2-letter-spacing: $letter-spacing-tight;
+$md-h2-color: var(--#{$md-prefix}-color-text);
+
+// 标题 H3
+$md-h3-font-size: $font-size-2xl;
+$md-h3-line-height: $line-height-snug;
+$md-h3-font-weight: $font-weight-semibold;
+$md-h3-margin-top: $spacing-6;
+$md-h3-margin-bottom: $spacing-4;
+$md-h3-color: var(--#{$md-prefix}-color-text);
+
+// 标题 H4
+$md-h4-font-size: $font-size-xl;
+$md-h4-line-height: $line-height-normal;
+$md-h4-font-weight: $font-weight-semibold;
+$md-h4-margin-top: $spacing-5;
+$md-h4-margin-bottom: $spacing-3;
+$md-h4-color: var(--#{$md-prefix}-color-text);
+
+// 标题 H5
+$md-h5-font-size: $font-size-lg;
+$md-h5-line-height: $line-height-normal;
+$md-h5-font-weight: $font-weight-semibold;
+$md-h5-margin-top: $spacing-4;
+$md-h5-margin-bottom: $spacing-3;
+$md-h5-color: var(--#{$md-prefix}-color-text);
+
+// 标题 H6
+$md-h6-font-size: $font-size-base;
+$md-h6-line-height: $line-height-normal;
+$md-h6-font-weight: $font-weight-semibold;
+$md-h6-margin-top: $spacing-4;
+$md-h6-margin-bottom: $spacing-2;
+$md-h6-color: var(--#{$md-prefix}-color-text-secondary);
+
+// 段落
+$md-p-font-size: $font-size-base;
+$md-p-line-height: $line-height-relaxed;
+$md-p-margin-bottom: $spacing-4;
+$md-p-color: var(--#{$md-prefix}-color-text);
+
+// 链接
+$md-link-color: var(--#{$md-prefix}-color-link);
+$md-link-hover-color: var(--#{$md-prefix}-color-link-hover);
+$md-link-font-weight: $font-weight-medium;
+$md-link-text-decoration: none;
+$md-link-hover-text-decoration: underline;
+
+// 列表
+$md-list-margin-top: $spacing-2;
+$md-list-margin-bottom: $spacing-4;
+$md-list-padding-left: $spacing-6;
+$md-list-item-margin-bottom: $spacing-2;
+$md-list-line-height: $line-height-relaxed;
+$md-list-color: var(--#{$md-prefix}-color-text);
+$md-list-nested-padding-left: $spacing-5;
+$md-list-nested-margin: $spacing-2 0;
+
+// 引用块
+$md-quote-padding: $spacing-4 $spacing-5;
+$md-quote-margin: $spacing-5 0;
+$md-quote-border-left-width: 3px;
+$md-quote-border-radius: $radius-lg;
+$md-quote-font-size: $font-size-base;
+$md-quote-line-height: $line-height-relaxed;
+$md-quote-color: var(--#{$md-prefix}-color-text-secondary);
+
+// 引用块类型
+$md-quote-info-bg: linear-gradient(135deg, #{$blue-50} 0%, #{$blue-100} 100%);
+$md-quote-info-border: #{$blue-500};
+$md-quote-info-icon-bg: rgba(59, 130, 246, 0.1);
+
+$md-quote-tip-bg: linear-gradient(135deg, #{$green-50} 0%, #{$green-100} 100%);
+$md-quote-tip-border: #{$green-500};
+$md-quote-tip-icon-bg: rgba(34, 197, 94, 0.1);
+
+$md-quote-warning-bg: linear-gradient(135deg, #{$yellow-50} 0%, #{$yellow-100} 100%);
+$md-quote-warning-border: #{$yellow-500};
+$md-quote-warning-icon-bg: rgba(234, 179, 8, 0.1);
+
+$md-quote-danger-bg: linear-gradient(135deg, #{$red-50} 0%, #{$red-100} 100%);
+$md-quote-danger-border: #{$red-500};
+$md-quote-danger-icon-bg: rgba(239, 68, 68, 0.1);
+
+// 代码块容器
+$md-code-block-margin: $spacing-4 0;
+$md-code-block-radius: $radius-xl;
+$md-code-block-shadow: none;
+
+// 代码块头部
+$md-code-header-height: 36px;
+$md-code-header-padding: 0 $spacing-3;
+$md-code-header-bg: #f0f0f2;
+$md-code-header-border: #e5e5e5;
+$md-code-header-radius: $radius-xl $radius-xl 0 0;
+
+// 语言标签
+$md-code-lang-font-size: $font-size-xs;
+$md-code-lang-font-weight: $font-weight-medium;
+$md-code-lang-color: rgba(17, 17, 51, 0.7);
+
+// 代码区域
+$md-code-body-padding: $spacing-4 $spacing-5;
+$md-code-body-bg: rgba(17, 17, 51, 0.02);
+$md-code-body-border: #e5e5e5;
+$md-code-body-radius: 0 0 $radius-xl $radius-xl;
+
+// 代码文本
+$md-code-font-family: $font-family-mono;
+$md-code-font-size: $font-size-sm;
+$md-code-line-height: $line-height-relaxed;
+$md-code-color: $gray-800;
+$md-code-tab-size: 4;
+
+// 行内代码
+$md-code-inline-padding: 2px 6px;
+$md-code-inline-margin: 0 2px;
+$md-code-inline-font-size: 0.9em;
+$md-code-inline-font-family: $font-family-mono;
+$md-code-inline-bg: var(--#{$md-prefix}-color-bg-spotlight);
+$md-code-inline-color: $red-600;
+$md-code-inline-border: var(--#{$md-prefix}-color-border);
+$md-code-inline-radius: $radius-sm;
+$md-code-inline-font-weight: $font-weight-medium;
+
+// 表格
+$md-table-margin: $spacing-4 0;
+$md-table-radius: $radius-xl;
+$md-table-border: #e5e5e5;
+$md-table-shadow: none;
+$md-table-header-height: 36px;
+$md-table-header-bg: #f0f0f2;
+$md-table-header-border: #e5e5e5;
+$md-table-cell-padding: $spacing-3 $spacing-4;
+$md-table-font-size: $font-size-sm;
+$md-table-line-height: $line-height-normal;
+$md-table-bg: #ffffff;
+$md-table-color: var(--#{$md-prefix}-color-text);
+$md-table-th-bg: rgba(17, 17, 51, 0.02);
+$md-table-th-color: rgba(17, 17, 51, 0.85);
+$md-table-th-font-size: $font-size-sm;
+$md-table-th-font-weight: $font-weight-semibold;
+$md-table-row-hover-bg: rgba(17, 17, 51, 0.02);
+
+// 图片
+$md-image-margin: $spacing-5 0;
+$md-image-radius: $radius-lg;
+$md-image-shadow: $shadow-sm;
+$md-image-shadow-hover: $shadow-md;
+$md-image-max-width: 100%;
+$md-image-transition: $transition-base;
+$md-image-caption-margin-top: $spacing-2;
+$md-image-caption-font-size: $font-size-xs;
+$md-image-caption-color: var(--#{$md-prefix}-color-text-tertiary);
+$md-image-caption-text-align: center;
+
+// 分割线
+$md-hr-margin: $spacing-8 0;
+$md-hr-height: 1px;
+$md-hr-bg: linear-gradient(
+  to right,
+  transparent,
+  rgba(0, 0, 0, 0.1) 15%,
+  rgba(0, 0, 0, 0.1) 85%,
+  transparent
+);
+
+// 滚动条
+$md-scrollbar-width: 6px;
+$md-scrollbar-height: 6px;
+$md-scrollbar-thumb-bg: rgba(0, 0, 0, 0.15);
+$md-scrollbar-thumb-hover-bg: rgba(0, 0, 0, 0.25);
+$md-scrollbar-track-bg: transparent;
+$md-scrollbar-radius: 3px;
+
+// 按钮 (复制按钮等)
+$md-btn-size: 28px;
+$md-btn-radius: $radius-md;
+$md-btn-color: rgba(17, 17, 51, 0.6);
+$md-btn-hover-color: rgba(17, 17, 51, 0.85);
+$md-btn-hover-bg: rgba(17, 17, 51, 0.08);
+$md-btn-icon-size: 16px;
+$md-btn-transition: $transition-fast;
+
+// 移动端适配
+$md-mobile-breakpoint: 768px;
+$md-mobile-font-size: 14px;
+$md-mobile-h1-font-size: 26px;
+$md-mobile-h2-font-size: 22px;
+$md-mobile-h3-font-size: 20px;
+$md-mobile-h4-font-size: 18px;
+$md-mobile-h5-font-size: 17px;
+$md-mobile-h6-font-size: 16px;
+$md-mobile-spacing-scale: 0.85;

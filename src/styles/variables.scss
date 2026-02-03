@@ -1,0 +1,135 @@
+// Markdown 渲染器 - 设计变量
+// 基于 4px 网格系统，参考现代设计规范
+
+// 可配置前缀
+$md-prefix: 'md' !default;
+
+// 基础色板
+$gray-50: #fafafa;
+$gray-100: #f5f5f5;
+$gray-200: #e5e5e5;
+$gray-300: #d4d4d4;
+$gray-400: #a3a3a3;
+$gray-500: #737373;
+$gray-600: #525252;
+$gray-700: #404040;
+$gray-800: #262626;
+$gray-900: #171717;
+
+// 主题色
+$blue-50: #eff6ff;
+$blue-100: #dbeafe;
+$blue-500: #3b82f6;
+$blue-600: #2563eb;
+$blue-700: #1d4ed8;
+
+$green-50: #f0fdf4;
+$green-100: #dcfce7;
+$green-500: #22c55e;
+$green-600: #16a34a;
+
+$yellow-50: #fefce8;
+$yellow-100: #fef9c3;
+$yellow-500: #eab308;
+$yellow-600: #ca8a04;
+
+$red-50: #fef2f2;
+$red-100: #fee2e2;
+$red-500: #ef4444;
+$red-600: #dc2626;
+
+// 语义色
+$color-text-primary: $gray-900;
+$color-text-secondary: $gray-700;
+$color-text-tertiary: $gray-500;
+$color-text-quaternary: $gray-400;
+
+$color-bg-page: #ffffff;
+$color-bg-container: #ffffff;
+$color-bg-elevated: $gray-50;
+$color-bg-spotlight: $gray-100;
+
+$color-border-primary: $gray-200;
+$color-border-secondary: $gray-100;
+
+$color-link: $blue-600;
+$color-link-hover: $blue-700;
+
+$color-success: $green-600;
+$color-warning: $yellow-600;
+$color-danger: $red-600;
+$color-info: $blue-600;
+
+// 间距系统 (4px 基准)
+$spacing-0: 0;
+$spacing-1: 4px;
+$spacing-2: 8px;
+$spacing-3: 12px;
+$spacing-4: 16px;
+$spacing-5: 20px;
+$spacing-6: 24px;
+$spacing-8: 32px;
+$spacing-10: 40px;
+$spacing-12: 48px;
+$spacing-16: 64px;
+
+// 字体系统
+$font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 
+                   'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', 
+                   Helvetica, Arial, sans-serif;
+$font-family-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', 
+                   Consolas, 'Courier New', monospace;
+
+// 字号
+$font-size-xs: 12px;
+$font-size-sm: 13px;
+$font-size-base: 15px;
+$font-size-lg: 16px;
+$font-size-xl: 18px;
+$font-size-2xl: 20px;
+$font-size-3xl: 24px;
+$font-size-4xl: 28px;
+$font-size-5xl: 32px;
+
+// 行高
+$line-height-tight: 1.25;
+$line-height-snug: 1.375;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.625;
+$line-height-loose: 1.75;
+
+// 字重
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// 字间距
+$letter-spacing-tight: -0.025em;
+$letter-spacing-normal: 0;
+$letter-spacing-wide: 0.025em;
+
+// 圆角
+$radius-sm: 4px;
+$radius-md: 6px;
+$radius-lg: 8px;
+$radius-xl: 12px;
+$radius-2xl: 16px;
+$radius-full: 9999px;
+
+// 阴影
+$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+
+// 过渡
+$transition-fast: 0.1s ease;
+$transition-base: 0.2s ease;
+$transition-slow: 0.3s ease;
+
+// 内容宽度
+$content-width-narrow: 640px;
+$content-width-normal: 720px;
+$content-width-wide: 800px;
+$content-width-full: 100%;
