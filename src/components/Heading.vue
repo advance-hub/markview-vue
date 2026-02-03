@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<{
   showAnchor?: boolean;
 }>(), {
   level: 1,
-  showAnchor: true,
+  showAnchor: false,
 });
 
 defineOptions({ inheritAttrs: false });

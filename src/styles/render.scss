@@ -427,15 +427,16 @@
 .md-render table {
   margin: 0;
   border-radius: 0;
+  border: transparent;
 }
 
 // ========================================
-// TOC 目录样式
+// 布局：内容区 + TOC
 // ========================================
 .#{$md-prefix}-render-layout {
   display: flex;
   align-items: flex-start;
-  gap: 40px;
+  gap: 32px;
 }
 
 .#{$md-prefix}-render-content {
@@ -443,77 +444,60 @@
   min-width: 0;
 }
 
-.#{$md-prefix}-render-toc {
-  position: sticky;
-  top: 24px;
-  flex-shrink: 0;
-  width: 200px;
-  max-height: calc(100vh - 48px);
-  overflow-y: auto;
-}
-
-.#{$md-prefix}-render-toc-inner {
-  padding: 16px;
-  background: var(--#{$md-prefix}-toc-bg, #{$gray-50});
-  border-radius: $radius-lg;
-  border: 1px solid var(--#{$md-prefix}-toc-border, #{$gray-200});
-}
-
-.#{$md-prefix}-render-toc-title {
-  font-size: 12px;
-  font-weight: $font-weight-semibold;
-  color: var(--#{$md-prefix}-toc-title-color, #{$gray-500});
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--#{$md-prefix}-toc-border, #{$gray-200});
-}
-
-.#{$md-prefix}-render-toc-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.#{$md-prefix}-render-toc-item {
-  display: block;
-  padding: 6px 8px;
-  font-size: 13px;
-  line-height: 1.4;
-  color: var(--#{$md-prefix}-toc-item-color, #{$gray-500});
-  text-decoration: none;
-  border-radius: $radius-md;
-  transition: all $transition-fast;
-  border-left: 2px solid transparent;
-  margin-left: -2px;
-
-  &:hover {
-    color: var(--#{$md-prefix}-toc-item-hover-color, #{$gray-700});
-    background: var(--#{$md-prefix}-toc-item-hover-bg, #{$gray-100});
+// ========================================
+// 固定高度模式（内部滚动）
+// ========================================
+.#{$md-prefix}-render--scrollable {
+  overflow: auto;
+  
+  // 滚动条样式
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
-
-  &.active {
-    color: var(--#{$md-prefix}-color-link);
-    background: rgba($blue-500, 0.08);
-    border-left-color: var(--#{$md-prefix}-color-link);
-    font-weight: $font-weight-medium;
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.25);
+    }
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  // Firefox
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  
+  // 固定高度模式下，TOC 不需要 sticky，因为容器本身会滚动
+  .md-toc-sidebar {
+    position: relative;
+    top: 0;
+    max-height: none;
+    overflow: visible;
+  }
+  
+  // 回到顶部按钮改为绝对定位（相对于容器）
+  .#{$md-prefix}-render-back-top {
+    position: absolute;
   }
 }
 
-// TOC 层级缩进
-.#{$md-prefix}-render-toc-level-2 {
-  padding-left: 8px;
-}
-
-.#{$md-prefix}-render-toc-level-3 {
-  padding-left: 20px;
-  font-size: 12px;
-}
-
-.#{$md-prefix}-render-toc-level-4 {
-  padding-left: 32px;
-  font-size: 12px;
+// 暗黑模式下的滚动条
+.#{$md-prefix}-render--dark.#{$md-prefix}-render--scrollable {
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+  
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 // ========================================
@@ -564,12 +548,6 @@
 // ========================================
 // 响应式
 // ========================================
-@media (max-width: 1024px) {
-  .#{$md-prefix}-render-toc {
-    display: none;
-  }
-}
-
 @media (max-width: 768px) {
   .#{$md-prefix}-render-back-top {
     bottom: 24px;

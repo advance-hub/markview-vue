@@ -1,6 +1,6 @@
 <template>
-  <div :class="wrapperClass" :style="style">
-    <div :class="{ 'md-render-layout': showToc }">
+  <div ref="wrapperRef" :class="wrapperClass" :style="computedStyle">
+    <div :class="layoutClass">
       <!-- 主内容区 -->
       <div ref="contentRef" class="md-render-content">
         <Skeleton v-if="isLoading" />
@@ -8,26 +8,18 @@
       </div>
 
       <!-- 右侧 TOC -->
-      <aside v-if="showToc && tocItems.length > 0" class="md-render-toc">
-        <div class="md-render-toc-inner">
-          <div class="md-render-toc-title">{{ tocTitle }}</div>
-          <nav class="md-render-toc-nav">
-            <a
-              v-for="item in tocItems"
-              :key="item.id"
-              :href="`#${item.id}`"
-              class="md-render-toc-item"
-              :class="[
-                `md-render-toc-level-${item.level}`,
-                { active: activeId === item.id }
-              ]"
-              @click="handleTocClick(item.id, $event)"
-            >
-              {{ item.text }}
-            </a>
-          </nav>
-        </div>
-      </aside>
+      <Toc
+        v-if="showToc && tocItems.length > 0"
+        :items="tocItems"
+        :doc-title="docTitle"
+        :min-level="tocMinLevel"
+        :max-level="tocMaxLevel"
+        :active-id="activeId"
+        :mode="tocMode"
+        :scroll-container="scrollContainer"
+        @click="handleTocClick"
+        @update:active-id="activeId = $event"
+      />
     </div>
 
     <!-- 回到顶部按钮 -->
@@ -56,14 +48,13 @@ import * as runtime from 'vue/jsx-runtime';
 import type { PluggableList } from '@mdx-js/mdx/lib/core';
 import type { MDXProps } from 'mdx/types';
 import * as MarkdownComponents from './components';
-import { CodeBlock, Table, Blockquote, ul, ol, li, hr, strong, em, del } from './components';
+import { CodeBlock, Table, Blockquote, ul, ol, li, hr, strong, em, del, Toc } from './components';
 import { Skeleton, provideHeadingCollapse } from './base';
 import './styles/index.scss';
 import 'katex/dist/katex.min.css';
 
 provideHeadingCollapse();
 
-/** TOC 目录项类型 */
 export interface TocItem {
   level: number;
   text: string;
@@ -91,14 +82,20 @@ export interface MarkdownRenderProps {
   prefix?: string;
   /** 主题模式 */
   theme?: 'light' | 'dark';
+  /** 固定高度（设置后启用内部滚动模式），如 '500px' 或 'calc(100vh - 60px)' */
+  height?: string;
+  /** 最大高度（设置后超出部分可滚动），如 '80vh' */
+  maxHeight?: string;
   /** 是否显示 TOC */
   showToc?: boolean;
-  /** TOC 最小层级 */
+  /** TOC 最小层级（默认 2，即 H2） */
   tocMinLevel?: number;
-  /** TOC 最大层级 */
+  /** TOC 最大层级（默认 4，即 H4） */
   tocMaxLevel?: number;
-  /** TOC 标题 */
-  tocTitle?: string;
+  /** TOC 文档标题（H1 内容，显示在 TOC 顶部） */
+  docTitle?: string;
+  /** TOC 布局模式：sidebar 固定侧边栏 / embedded 嵌入式 */
+  tocMode?: 'sidebar' | 'embedded';
   /** 是否显示回到顶部按钮 */
   showBackTop?: boolean;
   /** 回到顶部按钮显示阈值（滚动距离） */
@@ -114,8 +111,8 @@ const props = withDefaults(defineProps<MarkdownRenderProps>(), {
   theme: 'light',
   showToc: false,
   tocMinLevel: 2,
-  tocMaxLevel: 3,
-  tocTitle: '目录',
+  tocMaxLevel: 4,
+  tocMode: 'sidebar',
   showBackTop: false,
   backTopThreshold: 300,
 });
@@ -137,19 +134,43 @@ const cssPrefix = computed(() => `${props.prefix}-render`);
 const mdxComponent = ref<any>('div');
 const isLoading = ref(true);
 
-// TOC 相关
+// 容器引用
+const wrapperRef = ref<HTMLElement | null>(null);
 const contentRef = ref<HTMLElement | null>(null);
+
+// TOC 相关
 const tocItems = ref<TocItem[]>([]);
 const activeId = ref('');
 
 // 回到顶部相关
 const showBackTopButton = ref(false);
 
+// 是否使用固定高度模式（内部滚动）
+const isFixedHeight = computed(() => !!(props.height || props.maxHeight));
+
+// 滚动容器：固定高度模式下是 wrapper，否则是 window
+const scrollContainer = computed(() => isFixedHeight.value ? wrapperRef.value : null);
+
 const wrapperClass = computed(() => {
   const classes = [cssPrefix.value];
   if (props.theme === 'dark') classes.push(`${cssPrefix.value}--dark`);
+  if (isFixedHeight.value) classes.push(`${cssPrefix.value}--scrollable`);
   if (props.className) classes.push(props.className);
   return classes.join(' ');
+});
+
+const layoutClass = computed(() => {
+  const classes: string[] = [];
+  if (props.showToc) classes.push('md-render-layout');
+  return classes;
+});
+
+// 合并样式（包含 height/maxHeight）
+const computedStyle = computed(() => {
+  const styles: Record<string, any> = { ...props.style };
+  if (props.height) styles.height = props.height;
+  if (props.maxHeight) styles.maxHeight = props.maxHeight;
+  return styles;
 });
 
 const mergedComponents = computed(() => {
@@ -200,6 +221,8 @@ function getCompileOptions() {
     remarkPlugins: remarkList,
     rehypePlugins: rehypeList,
     format: props.format,
+    // 添加 baseUrl 支持 import 语句（使用当前页面 URL）
+    baseUrl: typeof window !== 'undefined' ? window.location.href : 'https://example.com',
   };
 }
 
@@ -266,54 +289,33 @@ function extractToc() {
   });
 }
 
-// 处理滚动事件
-function handleScroll() {
-  const scrollTop = window.scrollY;
-  
-  // 更新回到顶部按钮显示状态
-  if (props.showBackTop) {
-    showBackTopButton.value = scrollTop > props.backTopThreshold;
+// 获取滚动距离
+function getScrollTop(): number {
+  if (isFixedHeight.value && wrapperRef.value) {
+    return wrapperRef.value.scrollTop;
   }
-  
-  // 更新 TOC 激活状态
-  if (!props.showToc || tocItems.value.length === 0) return;
-  
-  const headings = tocItems.value
-    .map((item) => document.getElementById(item.id))
-    .filter(Boolean) as HTMLElement[];
-  
-  let currentId = '';
-  for (const heading of headings) {
-    if (heading.offsetTop <= scrollTop + 100) {
-      currentId = heading.id;
-    } else {
-      break;
-    }
-  }
-  
-  activeId.value = currentId || (headings[0]?.id ?? '');
+  return window.scrollY;
 }
 
-// 点击 TOC 项
-function handleTocClick(id: string, event: Event) {
-  event.preventDefault();
-  const element = document.getElementById(id);
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    activeId.value = id;
-    history.replaceState(null, '', `#${id}`);
-    
-    // 触发事件
-    const item = tocItems.value.find(t => t.id === id);
-    if (item) {
-      emit('toc-click', item);
-    }
+// 处理滚动事件（只处理回到顶部按钮，TOC 激活由 Toc 组件处理）
+function handleScroll() {
+  if (props.showBackTop) {
+    showBackTopButton.value = getScrollTop() > props.backTopThreshold;
   }
+}
+
+// 点击 TOC 项（从 Toc 组件接收）
+function handleTocClick(item: TocItem) {
+  emit('toc-click', item);
 }
 
 // 回到顶部
 function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (isFixedHeight.value && wrapperRef.value) {
+    wrapperRef.value.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
   emit('scroll-to-top');
 }
 
@@ -324,17 +326,33 @@ watch(isLoading, (loading) => {
   }
 });
 
+// 绑定滚动监听
+function bindScrollListener() {
+  if (props.showBackTop) {
+    const target = isFixedHeight.value && wrapperRef.value ? wrapperRef.value : window;
+    target.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+  }
+}
+
+// 解绑滚动监听
+function unbindScrollListener() {
+  if (wrapperRef.value) {
+    wrapperRef.value.removeEventListener('scroll', handleScroll);
+  }
+  window.removeEventListener('scroll', handleScroll);
+}
+
 onMounted(() => {
   compileAndRender(props.raw);
   
-  if (props.showToc || props.showBackTop) {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-  }
+  nextTick(() => {
+    bindScrollListener();
+  });
 });
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
+  unbindScrollListener();
 });
 
 watch(() => props.raw, compileAndRender);
