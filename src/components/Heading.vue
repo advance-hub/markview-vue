@@ -40,26 +40,26 @@ const collapseState = useHeadingCollapse();
 const tag = computed(() => `h${props.level}`);
 const headingClass = computed(() => `md-heading--h${props.level}`);
 
-const headingId = computed(() => {
+// 生成唯一 ID（带随机 hash，确保唯一性）
+const headingId = (() => {
   const content = slots.default?.();
-  if (!content) return '';
-  const text = extractTextFromVNode(content);
-  return generateHeadingId(text) || `heading-${props.level}-${Date.now()}`;
-});
+  const text = content ? extractTextFromVNode(content) : '';
+  return generateHeadingId(text);
+})();
 
 const isCollapsed = computed(() => {
   if (!collapseState) return false;
-  return collapseState.isCollapsed(headingId.value);
+  return collapseState.isCollapsed(headingId);
 });
 
 function handleToggle() {
   if (!collapseState || !headingRef.value) return;
   
-  collapseState.toggle(headingId.value);
+  collapseState.toggle(headingId);
   
   nextTick(() => {
     if (headingRef.value) {
-      collapseHeadingContent(headingRef.value, props.level, collapseState.isCollapsed(headingId.value));
+      collapseHeadingContent(headingRef.value, props.level, collapseState.isCollapsed(headingId));
     }
   });
 }

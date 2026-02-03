@@ -4,17 +4,19 @@
       <!-- 目录导航 - Delight Anchor 风格 -->
       <nav class="md-toc-nav">
         <a
-          v-for="(item, index) in filteredItems"
+          v-for="item in filteredItems"
           :key="item.id"
           :href="`#${item.id}`"
           :class="[
             'md-toc-link',
+            `md-toc-link--level-${item.level}`,
             { 'md-toc-link--active': activeId === item.id }
           ]"
+          :style="{ paddingLeft: `${(item.level - props.minLevel) * 12}px` }"
           :title="item.text"
           @click="handleClick(item, $event)"
         >
-          <span class="md-toc-link-text">{{ index + 1 }}、{{ item.text }}</span>
+          <span class="md-toc-link-text">{{ item.text }}</span>
         </a>
       </nav>
     </div>
@@ -22,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
+import { computed, ref, onMounted, onUnmounted, watch, nextTick } from 'vue';
 
 /** TOC 目录项类型 */
 export interface TocItem {
@@ -99,95 +101,128 @@ function handleClick(item: TocItem, event: Event) {
   
   const element = document.getElementById(item.id);
   if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // 立即更新激活状态（不等 IntersectionObserver）
     internalActiveId.value = item.id;
     emit('update:activeId', item.id);
     emit('click', item);
+    
+    // 滚动到目标位置
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     
     // 更新 URL hash（静默更新，不触发跳转）
     history.replaceState(null, '', `#${item.id}`);
   }
 }
 
-// 获取滚动目标（容器或 window）
-function getScrollTarget(): HTMLElement | Window {
-  return props.scrollContainer || window;
-}
+// IntersectionObserver 实例
+let observer: IntersectionObserver | null = null;
 
-// 获取容器顶部偏移（用于计算激活项）
-function getContainerOffset(): number {
-  if (props.scrollContainer) {
-    return props.scrollContainer.getBoundingClientRect().top;
+// 记录每个标题的 intersectionRatio（用于判断哪个最可见）
+const headingVisibility = ref<Map<string, number>>(new Map());
+
+// 设置 IntersectionObserver
+function setupObserver() {
+  // 清理旧的 observer
+  if (observer) {
+    observer.disconnect();
+    observer = null;
   }
-  return 0;
-}
-
-// 滚动监听：自动更新激活项
-function handleScroll() {
+  
   if (filteredItems.value.length === 0) return;
   
-  const headings = filteredItems.value
-    .map((item) => document.getElementById(item.id))
-    .filter(Boolean) as HTMLElement[];
-  
-  if (headings.length === 0) return;
-  
-  // 计算偏移量：容器模式下需要考虑容器位置
-  const containerOffset = getContainerOffset();
-  const offset = 80 + containerOffset; // 顶部偏移量
-  
-  let currentId = headings[0]?.id || '';
-  
-  for (const heading of headings) {
-    const rect = heading.getBoundingClientRect();
-    // 如果标题顶部已经滚过了视口顶部（考虑偏移），则认为是当前激活项
-    if (rect.top <= offset) {
-      currentId = heading.id;
-    } else {
-      break;
+  // 创建 observer
+  observer = new IntersectionObserver(
+    (entries) => {
+      // 更新标题可见性（只记录是否可见，不记录位置）
+      entries.forEach((entry) => {
+        const id = entry.target.id;
+        if (entry.isIntersecting) {
+          headingVisibility.value.set(id, 1);
+        } else {
+          headingVisibility.value.delete(id);
+        }
+      });
+      
+      // 找到应该激活的标题
+      let activeHeading: TocItem | null = null;
+      
+      // 策略：从上往下遍历，找到最后一个"已经滚过视口顶部"的标题
+      // 这样可以确保：向下滚动时逐个激活，向上滚动时也能正确回退
+      for (const item of filteredItems.value) {
+        const element = document.getElementById(item.id);
+        if (!element) continue;
+        
+        const rect = element.getBoundingClientRect();
+        
+        // 如果标题在视口顶部以上或刚进入顶部区域（100px 阈值）
+        if (rect.top <= 100) {
+          activeHeading = item;
+          // 继续找，直到找到最后一个满足条件的
+        } else {
+          // 标题还在下方，不再继续
+          break;
+        }
+      }
+      
+      // 如果没找到（页面刚加载或滚到最顶部），激活第一个
+      if (!activeHeading && filteredItems.value.length > 0) {
+        activeHeading = filteredItems.value[0];
+      }
+      
+      // 更新激活状态
+      if (activeHeading && internalActiveId.value !== activeHeading.id) {
+        internalActiveId.value = activeHeading.id;
+        emit('update:activeId', activeHeading.id);
+      }
+    },
+    {
+      root: props.scrollContainer || null,
+      // 观察整个视口，这样可以准确获取所有标题的位置
+      rootMargin: '0px',
+      threshold: 0,
     }
-  }
+  );
   
-  if (currentId !== internalActiveId.value) {
-    internalActiveId.value = currentId;
-    emit('update:activeId', currentId);
-  }
-}
-
-// 当前滚动目标
-let currentScrollTarget: HTMLElement | Window | null = null;
-
-// 绑定滚动监听
-function bindScrollListener() {
-  const target = getScrollTarget();
-  if (currentScrollTarget === target) return;
-  
-  // 解绑旧的
-  if (currentScrollTarget) {
-    currentScrollTarget.removeEventListener('scroll', handleScroll);
-  }
-  
-  // 绑定新的
-  currentScrollTarget = target;
-  target.addEventListener('scroll', handleScroll, { passive: true });
-  handleScroll();
+  // 观察所有标题元素
+  filteredItems.value.forEach((item) => {
+    const element = document.getElementById(item.id);
+    if (element && observer) {
+      observer.observe(element);
+    }
+  });
 }
 
 // 监听 scrollContainer 变化
 watch(
   () => props.scrollContainer,
   () => {
-    bindScrollListener();
+    nextTick(() => {
+      setupObserver();
+    });
   }
 );
 
+// 监听 items 变化，重新设置 observer
+watch(
+  () => props.items,
+  () => {
+    nextTick(() => {
+      setupObserver();
+    });
+  },
+  { deep: true, flush: 'post' }
+);
+
 onMounted(() => {
-  bindScrollListener();
+  nextTick(() => {
+    setupObserver();
+  });
 });
 
 onUnmounted(() => {
-  if (currentScrollTarget) {
-    currentScrollTarget.removeEventListener('scroll', handleScroll);
+  if (observer) {
+    observer.disconnect();
+    observer = null;
   }
 });
 </script>

@@ -49,7 +49,7 @@ import type { PluggableList } from '@mdx-js/mdx/lib/core';
 import type { MDXProps } from 'mdx/types';
 import * as MarkdownComponents from './components';
 import { CodeBlock, Table, Blockquote, ul, ol, li, hr, strong, em, del, Toc } from './components';
-import { Skeleton, provideHeadingCollapse } from './base';
+import { Skeleton, provideHeadingCollapse, generateHeadingId } from './base';
 import './styles/index.scss';
 import 'katex/dist/katex.min.css';
 
@@ -267,19 +267,25 @@ function extractToc() {
     headings.forEach((heading) => {
       const level = parseInt(heading.tagName[1], 10);
       if (level >= props.tocMinLevel && level <= props.tocMaxLevel) {
-        // 确保标题有 id
+        // 优先使用已有的 id（Heading 组件已设置）
         let id = heading.id;
-        if (!id) {
-          id = (heading.textContent || '')
-            .toLowerCase()
-            .replace(/\s+/g, '-')
-            .replace(/[^\w\u4e00-\u9fa5-]/g, '');
+        
+        // 提取文本内容：优先从 .md-heading__text 获取，避免包含 toggle icon
+        const textSpan = heading.querySelector('.md-heading__text');
+        const text = textSpan?.textContent?.trim() || heading.textContent?.trim() || '';
+        
+        // 如果没有 id，为非 Heading 组件的标题生成唯一 ID
+        if (!id && text) {
+          id = generateHeadingId(text);
           heading.id = id;
         }
         
+        // 跳过没有有效 id 的标题
+        if (!id) return;
+        
         items.push({
           level,
-          text: heading.textContent || '',
+          text,
           id,
         });
       }

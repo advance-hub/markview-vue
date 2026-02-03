@@ -39,14 +39,23 @@ export function useHeadingCollapse(): HeadingCollapseState | null {
 }
 
 /**
- * 根据文本内容生成标题 ID
+ * 生成随机 hash
+ */
+function randomHash(): string {
+  return Math.random().toString(36).slice(2, 8);
+}
+
+/**
+ * 生成唯一的标题 ID（文本前缀 + 随机 hash）
  */
 export function generateHeadingId(text: string): string {
-  return text
+  const prefix = text
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^\w\u4e00-\u9fa5-]/g, '')
-    .slice(0, 50);
+    .slice(0, 20);
+  
+  return prefix ? `${prefix}-${randomHash()}` : `heading-${randomHash()}`;
 }
 
 /**
