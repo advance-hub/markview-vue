@@ -221,7 +221,9 @@ function getCompileOptions() {
     remarkPlugins: remarkList,
     rehypePlugins: rehypeList,
     format: props.format,
-    // 添加 baseUrl 支持 import 语句（使用当前页面 URL）
+    // 禁用动态 import，所有组件通过 components prop 传入
+    useDynamicImport: false,
+    // baseUrl 用于解析相对路径（虽然已禁用动态 import，但某些场景可能需要）
     baseUrl: typeof window !== 'undefined' ? window.location.href : 'https://example.com',
   };
 }

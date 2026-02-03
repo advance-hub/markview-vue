@@ -18,10 +18,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, useSlots, watch } from 'vue';
-import { codeToHtml, type BundledLanguage } from 'shiki';
 import BlockHeader from './BlockHeader.vue';
 import { toast, Icon } from '../base';
-import { extractTextFromVNode, extractLanguageFromVNode, normalizeLanguage, trimCodeLines, copyToClipboard } from '../utils';
+import { extractTextFromVNode, extractLanguageFromVNode, normalizeLanguage, trimCodeLines, copyToClipboard, highlightCode } from '../utils';
 
 const props = withDefaults(defineProps<{
   className?: string;
@@ -67,15 +66,7 @@ const handleToggle = () => {
 
 async function highlight(code: string, lang: string): Promise<string> {
   const mappedLang = normalizeLanguage(lang);
-  try {
-    return await codeToHtml(code, { lang: mappedLang as BundledLanguage, theme: 'github-light' });
-  } catch {
-    try {
-      return await codeToHtml(code, { lang: 'text', theme: 'github-light' });
-    } catch {
-      return `<pre><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
-    }
-  }
+  return highlightCode(code, mappedLang);
 }
 
 async function processCode() {
