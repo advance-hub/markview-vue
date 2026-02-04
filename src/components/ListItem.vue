@@ -8,16 +8,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useSlots } from 'vue';
+import { computed } from 'vue';
 import { Checkbox } from '../base';
 
 const props = defineProps<{
-  checked?: boolean;
+  checked?: boolean | null;
 }>();
 
-const slots = useSlots();
-
-const isTask = computed(() => props.checked !== undefined);
+// 只有 checked 是明确的布尔值时才显示为任务列表
+const isTask = computed(() => typeof props.checked === 'boolean');
 </script>
 
 <style scoped lang="scss">
