@@ -2,7 +2,7 @@
   "name": "markview-vue",
   "version": "0.1.0",
   "description": "Modern Vue 3 Markdown/MDX renderer with syntax highlighting, math formulas, TOC and more",
-  "author": "chenjingsheng",
+  "author": "advance",
   "repository": {
     "type": "git",
     "url": "https://github.com/hushaobo/markview-vue.git"
