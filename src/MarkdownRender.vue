@@ -48,7 +48,7 @@ import * as runtime from 'vue/jsx-runtime';
 import type { PluggableList } from '@mdx-js/mdx/lib/core';
 import type { MDXProps } from 'mdx/types';
 import * as MarkdownComponents from './components';
-import { CodeBlock, Table, Blockquote, ul, ol, li, hr, strong, em, del, Toc } from './components';
+import { CodeBlock, Table, Blockquote, ul, ol, hr, strong, em, del, Toc } from './components';
 import { Skeleton, provideHeadingCollapse, generateHeadingId } from './base';
 import './styles/index.scss';
 import 'katex/dist/katex.min.css';
@@ -180,14 +180,16 @@ const mergedComponents = computed(() => {
     blockquote: Blockquote,
     ul,
     ol,
-    li,
+    // li 使用原生元素，不做自定义映射
     hr,
     strong,
     em,
     del,
   };
   
-  const all: Record<string, any> = { ...MarkdownComponents, ...props.components };
+  // 排除 li - 让 MDX 使用原生 li 元素，避免任务列表检测问题
+  const { li: _li, ListItem: _ListItem, ...filteredComponents } = MarkdownComponents as any;
+  const all: Record<string, any> = { ...filteredComponents, ...props.components };
   
   Object.keys(all).forEach(key => {
     const comp = all[key];

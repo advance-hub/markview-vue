@@ -18,6 +18,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'MarkviewVue',
+      cssFileName: 'style',
     },
     rollupOptions: {
       external: ['vue', 'vue/jsx-runtime'],
@@ -26,20 +27,12 @@ export default defineConfig({
           format: 'es',
           entryFileNames: 'index.js',
           chunkFileNames: 'assets/[name]-[hash].js',
-          assetFileNames: (assetInfo) => {
-            if (assetInfo.name === 'style.css') return 'style.css';
-            return 'assets/[name]-[hash][extname]';
-          },
           globals: { vue: 'Vue' },
         },
         {
           format: 'cjs',
           entryFileNames: 'index.cjs',
           chunkFileNames: 'assets/[name]-[hash].cjs',
-          assetFileNames: (assetInfo) => {
-            if (assetInfo.name === 'style.css') return 'style.css';
-            return 'assets/[name]-[hash][extname]';
-          },
           globals: { vue: 'Vue' },
         },
       ],
