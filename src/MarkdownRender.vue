@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, nextTick, h } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted, nextTick, h, defineComponent } from 'vue';
 import { evaluate } from '@mdx-js/mdx';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -48,8 +48,9 @@ import * as runtime from 'vue/jsx-runtime';
 import type { PluggableList } from '@mdx-js/mdx/lib/core';
 import type { MDXProps } from 'mdx/types';
 import * as MarkdownComponents from './components';
-import { CodeBlock, Table, Blockquote, ul, ol, hr, strong, em, del, Toc } from './components';
+import { CodeBlock, Table, Blockquote, Container, ul, ol, hr, strong, em, del, Toc } from './components';
 import { Skeleton, provideHeadingCollapse, generateHeadingId } from './base';
+import { preprocessContainers } from './utils';
 import './styles/index.scss';
 import 'katex/dist/katex.min.css';
 
@@ -178,6 +179,7 @@ const mergedComponents = computed(() => {
     pre: CodeBlock,
     table: Table,
     blockquote: Blockquote,
+    MdContainer: Container, // 自定义容器组件 (::: tip, ::: warning, ::: danger, ::: info)
     ul,
     ol,
     // li 使用原生元素，不做自定义映射
@@ -241,7 +243,19 @@ async function compileAndRender(mdxRaw: string) {
   isLoading.value = true;
   
   try {
-    const result = await evaluate(mdxRaw, { ...getCompileOptions(), ...runtime });
+    // 预处理：将 ::: 容器语法转换为 JSX 组件
+    const processedContent = preprocessContainers(mdxRaw);
+    
+    // Debug: 输出预处理后的内容
+    if (import.meta.env.DEV) {
+      if (processedContent !== mdxRaw) {
+        console.log('[MarkdownRender] 检测到容器语法，已转换');
+        console.log('原始内容:', mdxRaw.slice(0, 200));
+        console.log('转换后:', processedContent.slice(0, 500));
+      }
+    }
+    
+    const result = await evaluate(processedContent, { ...getCompileOptions(), ...runtime });
     mdxComponent.value = result.default;
   } catch (error) {
     console.error('Markdown 渲染错误:', error);

@@ -14,7 +14,7 @@ import {
   ChevronRight, ChevronDown, ChevronUp, ChevronsUpDown,
   Expand, Shrink, Maximize2, Minimize2,
   RotateCw, RotateCcw, ZoomIn, ZoomOut, RefreshCw, Download, ExternalLink,
-  CheckCircle, AlertCircle, AlertTriangle, Info,
+  CheckCircle, AlertCircle, AlertTriangle, Info, Lightbulb,
   Code, Table, Quote, Image, Link,
 } from 'lucide-vue-next';
 
@@ -40,8 +40,11 @@ const iconMap = {
   'external-link': ExternalLink,
   success: CheckCircle,
   error: AlertCircle,
+  'alert-circle': AlertCircle,
   warning: AlertTriangle,
+  'alert-triangle': AlertTriangle,
   info: Info,
+  lightbulb: Lightbulb,
   code: Code,
   table: Table,
   quote: Quote,

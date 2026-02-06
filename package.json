@@ -1,6 +1,6 @@
 {
   "name": "markview-vue",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Modern Vue 3 Markdown/MDX renderer with syntax highlighting, math formulas, TOC and more",
   "author": "advance",
   "repository": {
@@ -33,13 +33,13 @@
     "**/*.scss"
   ],
   "scripts": {
-    "dev": "vite",
+    "dev": "vite build --watch",
     "build": "vite build",
     "build:check": "vue-tsc --noEmit && vite build",
     "prepublishOnly": "pnpm run build",
-    "dev:demo": "cd playground && pnpm dev",
-    "build:demo": "cd playground && pnpm build",
-    "deploy:demo": "cd playground && pnpm build && gh-pages -d dist -b dist"
+    "dev:demo": "cd ../../playground/markview && pnpm dev",
+    "build:demo": "cd ../../playground/markview && pnpm build",
+    "deploy:demo": "cd ../../playground/markview && pnpm build && gh-pages -d dist -b dist"
   },
   "peerDependencies": {
     "vue": "^3.3.0"
