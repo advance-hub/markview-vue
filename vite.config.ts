@@ -20,7 +20,15 @@ export default defineConfig(({ command }) => {
     ],
     // dev 模式使用 dev/index.html
     root: isDev ? resolve(__dirname, 'dev') : __dirname,
-    build: {
+    build: isDev ? {
+      // dev 模式打包成静态站点
+      outDir: resolve(__dirname, 'demo-dist'),
+      emptyOutDir: true,
+      rollupOptions: {
+        input: resolve(__dirname, 'dev/index.html'),
+      },
+    } : {
+      // 库模式打包
       lib: {
         entry: resolve(__dirname, 'src/index.ts'),
         name: 'MarkviewVue',

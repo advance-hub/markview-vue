@@ -78,6 +78,7 @@
         :show-back-top="showBackTop"
         :height="computedHeight"
         :max-height="computedMaxHeight"
+        :components="customComponents"
         @rendered="onRendered"
         @toc-change="onTocChange"
       />
@@ -95,13 +96,18 @@
 import { ref, computed } from 'vue';
 import MarkdownRender from '../src/MarkdownRender.vue';
 import '../src/styles/index.scss';
-import demoMd from './demo.md?raw';
+import demoMd from './content/demo.md?raw';
+// import componentDemoMd from './content/component-demo.md?raw'; // 切换到组件演示
+import * as CustomComponents from './components';
 
 const theme = ref<'light' | 'dark'>('light');
 const showToc = ref(true);
 const showBackTop = ref(true);
 const tocMode = ref<'sidebar' | 'embedded'>('sidebar');
 const heightMode = ref<'auto' | 'fixed' | 'max'>('auto');
+
+// 注册所有自定义组件
+const customComponents = CustomComponents;
 
 const computedHeight = computed(() => {
   if (heightMode.value === 'fixed') {

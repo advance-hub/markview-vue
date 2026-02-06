@@ -34,13 +34,13 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:watch": "vite build --watch",
-    "build:check": "vue-tsc --noEmit && vite build",
+    "build": "vite build --mode production",
+    "build:demo": "vite build --mode development",
+    "build:watch": "vite build --mode production --watch",
+    "build:check": "vue-tsc --noEmit && vite build --mode production",
+    "preview": "vite preview --outDir demo-dist --port 3002",
     "prepublishOnly": "pnpm run build",
-    "dev:demo": "cd ../../playground/markview && pnpm dev",
-    "build:demo": "cd ../../playground/markview && pnpm build",
-    "deploy:demo": "cd ../../playground/markview && pnpm build && gh-pages -d dist -b dist"
+    "deploy:demo": "pnpm build:demo && gh-pages -d demo-dist"
   },
   "peerDependencies": {
     "vue": "^3.3.0"
