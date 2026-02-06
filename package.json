@@ -35,9 +35,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --mode production",
-    "build:demo": "vite build --mode development",
-    "build:watch": "vite build --mode production --watch",
-    "build:check": "vue-tsc --noEmit && vite build --mode production",
+    "build:demo": "vite build --mode demo",
+    "build:watch": "vite build --watch",
+    "build:check": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --outDir demo-dist --port 3002",
     "prepublishOnly": "pnpm run build",
     "deploy:demo": "pnpm build:demo && gh-pages -d demo-dist"
