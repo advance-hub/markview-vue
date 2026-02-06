@@ -9,3 +9,13 @@ declare module '*.vue' {
 declare module 'vue/jsx-runtime' {
   export * from '@vue/runtime-core';
 }
+
+declare module '*.md?raw' {
+  const content: string;
+  export default content;
+}
+
+declare module '*.md' {
+  const content: string;
+  export default content;
+}
