@@ -16,6 +16,7 @@
         :max-level="tocMaxLevel"
         :active-id="activeId"
         :mode="tocMode"
+        :sticky-top="tocStickyTop"
         :scroll-container="scrollContainer"
         @click="handleTocClick"
         @update:active-id="activeId = $event"
@@ -97,6 +98,8 @@ export interface MarkdownRenderProps {
   docTitle?: string;
   /** TOC 布局模式：sidebar 固定侧边栏 / embedded 嵌入式 */
   tocMode?: 'sidebar' | 'embedded';
+  /** TOC sticky 定位的 top 偏移量（如页面有固定顶栏，需传入顶栏高度 + 间距），如 '77px' */
+  tocStickyTop?: string;
   /** 是否显示回到顶部按钮 */
   showBackTop?: boolean;
   /** 回到顶部按钮显示阈值（滚动距离） */

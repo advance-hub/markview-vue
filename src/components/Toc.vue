@@ -1,11 +1,12 @@
 <template>
-  <aside :class="tocClass">
+  <aside ref="asideRef" :class="tocClass" :style="tocStyle">
     <div class="md-toc-inner">
       <!-- 目录导航 - Delight Anchor 风格 -->
       <nav class="md-toc-nav">
         <a
           v-for="item in filteredItems"
           :key="item.id"
+          :ref="(el: any) => setLinkRef(item.id, el as HTMLElement | null)"
           :href="`#${item.id}`"
           :class="[
             'md-toc-link',
@@ -50,6 +51,8 @@ export interface TocProps {
   className?: string;
   /** 滚动容器（默认 window，固定高度模式下传入容器元素） */
   scrollContainer?: HTMLElement | null;
+  /** sticky 定位的 top 偏移量（如页面有固定顶栏，需传入顶栏高度 + 间距），如 '77px' */
+  stickyTop?: string;
 }
 
 const props = withDefaults(defineProps<TocProps>(), {
@@ -79,6 +82,28 @@ const tocClass = computed(() => {
   return classes;
 });
 
+// 当外部传入 stickyTop 时，覆盖 CSS 变量
+const tocStyle = computed(() => {
+  if (!props.stickyTop) return undefined;
+  return {
+    '--toc-top': props.stickyTop,
+    '--toc-max-height': `calc(100vh - ${props.stickyTop} - 16px)`,
+  } as Record<string, string>;
+});
+
+// TOC 容器 ref，用于自动滚动
+const asideRef = ref<HTMLElement | null>(null);
+
+// TOC 链接元素 ref 映射
+const linkRefs = new Map<string, HTMLElement>();
+function setLinkRef(id: string, el: HTMLElement | null) {
+  if (el) {
+    linkRefs.set(id, el);
+  } else {
+    linkRefs.delete(id);
+  }
+}
+
 // 内部激活状态
 const internalActiveId = ref(props.activeId || '');
 
@@ -94,6 +119,35 @@ watch(
 
 // 计算属性：当前激活 ID
 const activeId = computed(() => internalActiveId.value);
+
+// 激活项变化时，自动将 TOC 滚动到对应链接使其可见
+watch(activeId, (id) => {
+  if (!id || !asideRef.value) return;
+  const linkEl = linkRefs.get(id);
+  if (!linkEl) return;
+
+  const container = asideRef.value;
+  const containerRect = container.getBoundingClientRect();
+  const linkRect = linkEl.getBoundingClientRect();
+
+  // 链接相对于 TOC 容器可视区域的位置
+  const relativeTop = linkRect.top - containerRect.top;
+  const relativeBottom = linkRect.bottom - containerRect.top;
+  const containerHeight = container.clientHeight;
+
+  // 判断是否在 TOC 可视区域内（上下各留 20px 余量）
+  const isAbove = relativeTop < 20;
+  const isBelow = relativeBottom > containerHeight - 20;
+
+  if (isAbove || isBelow) {
+    // 将激活项滚动到 TOC 容器的中间位置
+    const scrollOffset = relativeTop - containerHeight / 2 + linkEl.clientHeight / 2;
+    container.scrollTo({
+      top: container.scrollTop + scrollOffset,
+      behavior: 'smooth',
+    });
+  }
+});
 
 // 点击目录项
 function handleClick(item: TocItem, event: Event) {
