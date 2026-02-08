@@ -45,6 +45,7 @@ import { evaluate } from '@mdx-js/mdx';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeRaw from 'rehype-raw';
 import * as runtime from 'vue/jsx-runtime';
 import type { PluggableList } from '@mdx-js/mdx/lib/core';
 import type { MDXProps } from 'mdx/types';
@@ -107,7 +108,7 @@ export interface MarkdownRenderProps {
 }
 
 const props = withDefaults(defineProps<MarkdownRenderProps>(), {
-  format: 'mdx',
+  format: 'md',
   remarkGfm: true,
   raw: '',
   components: () => ({}),
@@ -222,6 +223,10 @@ function getCompileOptions() {
   remarkList.push(remarkMath);
   
   const rehypeList = [...(props.rehypePlugins ?? [])];
+  // format: 'md' 时需要 rehype-raw 才能渲染 markdown 中的 HTML 块（如 <div>, <img> 等）
+  if (props.format === 'md') {
+    rehypeList.push(rehypeRaw);
+  }
   rehypeList.push(rehypeKatex);
   
   return {
@@ -246,16 +251,11 @@ async function compileAndRender(mdxRaw: string) {
   isLoading.value = true;
   
   try {
-    // 预处理：将 ::: 容器语法转换为 JSX 组件
-    const processedContent = preprocessContainers(mdxRaw);
-    
-    // Debug: 输出预处理后的内容
-    if (import.meta.env.DEV) {
-      if (processedContent !== mdxRaw) {
-        console.log('[MarkdownRender] 检测到容器语法，已转换');
-        console.log('原始内容:', mdxRaw.slice(0, 200));
-        console.log('转换后:', processedContent.slice(0, 500));
-      }
+    let processedContent = mdxRaw;
+
+    if (props.format === 'mdx') {
+      // MDX 模式：将 ::: 容器语法转换为 JSX 组件
+      processedContent = preprocessContainers(processedContent);
     }
     
     const result = await evaluate(processedContent, { ...getCompileOptions(), ...runtime });

@@ -1,6 +1,6 @@
 {
   "name": "markview-vue",
-  "version": "0.1.5",
+  "version": "0.1.8",
   "description": "Modern Vue 3 Markdown/MDX renderer with syntax highlighting, math formulas, TOC and more",
   "author": "advance",
   "repository": {
@@ -52,6 +52,7 @@
     "katex": "^0.16.28",
     "lucide-vue-next": "^0.563.0",
     "rehype-katex": "^7.0.1",
+    "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
     "shiki": "^3.22.0"

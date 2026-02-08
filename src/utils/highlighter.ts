@@ -11,19 +11,7 @@ import githubLight from '@shikijs/themes/github-light'
 const BUNDLED_LANGS = [
   import('@shikijs/langs/javascript'),
   import('@shikijs/langs/typescript'),
-  import('@shikijs/langs/json'),
-  import('@shikijs/langs/html'),
-  import('@shikijs/langs/css'),
-  import('@shikijs/langs/python'),
-  import('@shikijs/langs/bash'),
-  import('@shikijs/langs/yaml'),
-  import('@shikijs/langs/sql'),
-  import('@shikijs/langs/java'),
-  import('@shikijs/langs/go'),
-  import('@shikijs/langs/jsx'),
-  import('@shikijs/langs/tsx'),
-  import('@shikijs/langs/vue'),
-  import('@shikijs/langs/scss'),
+  import('@shikijs/langs/json')
 ]
 
 let highlighterInstance: HighlighterCore | null = null
