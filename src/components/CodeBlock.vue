@@ -17,10 +17,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, useSlots, watch } from 'vue';
+import { ref, computed, onMounted, useSlots, watch, inject } from 'vue';
 import BlockHeader from './BlockHeader.vue';
 import { toast, Icon } from '../base';
 import { extractTextFromVNode, extractLanguageFromVNode, normalizeLanguage, trimCodeLines, copyToClipboard, highlightCode } from '../utils';
+import { MarkdownThemeKey } from '../injection-keys';
 
 const props = withDefaults(defineProps<{
   className?: string;
@@ -44,6 +45,7 @@ const rawCode = ref('');
 const detectedLang = ref('text');
 const lineCount = ref(1);
 const isExpanded = ref(props.defaultExpanded);
+const themeMode = inject(MarkdownThemeKey, ref<'light' | 'dark'>('light'));
 
 const displayLanguage = computed(() => detectedLang.value || 'text');
 
@@ -66,7 +68,7 @@ const handleToggle = () => {
 
 async function highlight(code: string, lang: string): Promise<string> {
   const mappedLang = normalizeLanguage(lang);
-  return highlightCode(code, mappedLang);
+  return highlightCode(code, mappedLang, themeMode.value);
 }
 
 async function processCode() {
@@ -90,6 +92,9 @@ async function processCode() {
 
 onMounted(processCode);
 watch(() => slots.default?.(), processCode, { deep: true });
+watch(themeMode, () => {
+  processCode();
+});
 
 async function handleCopy() {
   const success = await copyToClipboard(rawCode.value);
@@ -125,16 +130,16 @@ async function handleCopy() {
     }
     
     &::-webkit-scrollbar-thumb {
-      background: $md-scrollbar-thumb-bg;
+      background: var(--#{$md-prefix}-scrollbar-thumb, #{$md-scrollbar-thumb-bg});
       border-radius: $md-scrollbar-radius;
       
       &:hover {
-        background: $md-scrollbar-thumb-hover-bg;
+        background: var(--#{$md-prefix}-scrollbar-thumb-hover, #{$md-scrollbar-thumb-hover-bg});
       }
     }
     
     &::-webkit-scrollbar-track {
-      background: $md-scrollbar-track-bg;
+      background: var(--#{$md-prefix}-scrollbar-track, #{$md-scrollbar-track-bg});
     }
     
     &::-webkit-scrollbar-corner {
@@ -215,6 +220,32 @@ async function handleCopy() {
     &:hover {
       background: var(--#{$md-prefix}-color-bg-spotlight);
       color: var(--#{$md-prefix}-color-text);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .md-code-block {
+    &__body {
+      border-radius: $radius-lg;
+    }
+
+    &__lines {
+      padding: $spacing-3 $spacing-3;
+    }
+
+    &__line-number {
+      font-size: $font-size-xs;
+    }
+
+    &__code {
+      :deep(pre) {
+        padding: $spacing-3 $spacing-4;
+      }
+
+      :deep(code) {
+        font-size: $font-size-xs;
+      }
     }
   }
 }

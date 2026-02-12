@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, nextTick, h, defineComponent } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted, nextTick, h, defineComponent, provide } from 'vue';
 import { evaluate } from '@mdx-js/mdx';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -52,7 +52,9 @@ import type { MDXProps } from 'mdx/types';
 import * as MarkdownComponents from './components';
 import { CodeBlock, Table, Blockquote, Container, ul, ol, hr, strong, em, del, Toc } from './components';
 import { Skeleton, provideHeadingCollapse, generateHeadingId } from './base';
-import { preprocessContainers } from './utils';
+import { preprocessContainers, loadLanguages } from './utils';
+import type { LangInput } from './utils/highlighter';
+import { MarkdownThemeKey, type MarkdownThemeMode } from './injection-keys';
 import './styles/index.scss';
 import 'katex/dist/katex.min.css';
 
@@ -105,6 +107,13 @@ export interface MarkdownRenderProps {
   showBackTop?: boolean;
   /** 回到顶部按钮显示阈值（滚动距离） */
   backTopThreshold?: number;
+  /**
+   * 额外语言包，支持以下格式：
+   * - 单个语言：import('@shikijs/langs/python')
+   * - 语言数组：[import('@shikijs/langs/python'), import('@shikijs/langs/rust')]
+   * - 语言包（bundled）：import('@shikijs/langs') — 自动解析包内所有语言
+   */
+  extraLangs?: LangInput;
 }
 
 const props = withDefaults(defineProps<MarkdownRenderProps>(), {
@@ -120,6 +129,7 @@ const props = withDefaults(defineProps<MarkdownRenderProps>(), {
   tocMode: 'sidebar',
   showBackTop: false,
   backTopThreshold: 300,
+  extraLangs: () => [],
 });
 
 const emit = defineEmits<{
@@ -138,6 +148,10 @@ const emit = defineEmits<{
 const cssPrefix = computed(() => `${props.prefix}-render`);
 const mdxComponent = ref<any>('div');
 const isLoading = ref(true);
+
+// 提供主题给子组件（CodeBlock 等）
+const themeMode = computed<MarkdownThemeMode>(() => (props.theme === 'dark' ? 'dark' : 'light'));
+provide(MarkdownThemeKey, themeMode);
 
 // 容器引用
 const wrapperRef = ref<HTMLElement | null>(null);
@@ -251,6 +265,12 @@ async function compileAndRender(mdxRaw: string) {
   isLoading.value = true;
   
   try {
+    if (props.extraLangs) {
+      const hasLangs = Array.isArray(props.extraLangs) ? props.extraLangs.length > 0 : true
+      if (hasLangs) {
+        await loadLanguages(props.extraLangs);
+      }
+    }
     let processedContent = mdxRaw;
 
     if (props.format === 'mdx') {
@@ -274,6 +294,16 @@ async function compileAndRender(mdxRaw: string) {
     isLoading.value = false;
   }
 }
+
+watch(
+  () => props.extraLangs,
+  async (langs) => {
+    if (langs && (!Array.isArray(langs) || langs.length > 0)) {
+      await loadLanguages(langs);
+    }
+  },
+  { deep: true }
+);
 
 // 从 DOM 中提取 TOC
 function extractToc() {
@@ -370,7 +400,7 @@ function unbindScrollListener() {
   window.removeEventListener('scroll', handleScroll);
 }
 
-onMounted(() => {
+onMounted(async () => {
   compileAndRender(props.raw);
   
   nextTick(() => {

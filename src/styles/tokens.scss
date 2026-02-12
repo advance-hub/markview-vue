@@ -33,6 +33,29 @@
   --#{$md-prefix}-table-header-bg: rgba(17, 17, 51, 0.02);
   --#{$md-prefix}-table-border: #e5e5e5;
   --#{$md-prefix}-table-hover-bg: rgba(17, 17, 51, 0.02);
+
+  // 行内代码
+  --#{$md-prefix}-color-code-text: #{$red-600};
+  --#{$md-prefix}-color-code-bg: #{$gray-100};
+  --#{$md-prefix}-code-inline-bg: #f5f5f7;
+  --#{$md-prefix}-code-inline-border: #e5e5e5;
+  --#{$md-prefix}-code-inline-color: #dc2626;
+
+  // 引用块
+  --#{$md-prefix}-quote-bg: #f7f8fa;
+  --#{$md-prefix}-quote-border: #3370ff;
+  --#{$md-prefix}-quote-text: #4b5563;
+
+  // 高亮标记
+  --#{$md-prefix}-mark-bg: rgba(255, 235, 59, 0.4);
+
+  // 分割线
+  --#{$md-prefix}-hr-bg: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.1) 15%, rgba(0, 0, 0, 0.1) 85%, transparent);
+
+  // 滚动条
+  --#{$md-prefix}-scrollbar-thumb: rgba(0, 0, 0, 0.15);
+  --#{$md-prefix}-scrollbar-thumb-hover: rgba(0, 0, 0, 0.25);
+  --#{$md-prefix}-scrollbar-track: transparent;
 }
 
 // CSS 自定义属性 - 暗黑主题
@@ -60,11 +83,35 @@
   --#{$md-prefix}-code-border: #3a3a3c;
   
   // 表格 - 暗黑
-  --#{$md-prefix}-table-bg: #1c1c1e;
-  --#{$md-prefix}-table-header-bg: #2c2c2e;
-  --#{$md-prefix}-table-border: #3a3a3c;
-  --#{$md-prefix}-table-hover-bg: #2c2c2e;
-  
+  --#{$md-prefix}-table-bg: #1e1e20;
+  --#{$md-prefix}-table-header-bg: #2a2a2e;
+  --#{$md-prefix}-table-border: #404044;
+  --#{$md-prefix}-table-hover-bg: rgba(255, 255, 255, 0.06);
+  --#{$md-prefix}-table-stripe-bg: rgba(255, 255, 255, 0.02);
+
+  // 行内代码 - 暗黑
+  --#{$md-prefix}-color-code-text: #f87171;
+  --#{$md-prefix}-color-code-bg: #2c2c2e;
+  --#{$md-prefix}-code-inline-bg: #2b2b2f;
+  --#{$md-prefix}-code-inline-border: #3a3a3c;
+  --#{$md-prefix}-code-inline-color: #fca5a5;
+
+  // 引用块 - 暗黑
+  --#{$md-prefix}-quote-bg: #242427;
+  --#{$md-prefix}-quote-border: #4e83fd;
+  --#{$md-prefix}-quote-text: #b3b3b3;
+
+  // 高亮标记 - 暗黑
+  --#{$md-prefix}-mark-bg: rgba(250, 204, 21, 0.28);
+
+  // 分割线 - 暗黑
+  --#{$md-prefix}-hr-bg: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2) 15%, rgba(255, 255, 255, 0.2) 85%, transparent);
+
+  // 滚动条 - 暗黑
+  --#{$md-prefix}-scrollbar-thumb: rgba(255, 255, 255, 0.2);
+  --#{$md-prefix}-scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+  --#{$md-prefix}-scrollbar-track: transparent;
+
   // TOC 目录 - 暗黑
   --#{$md-prefix}-toc-bg: #2c2c2e;
   --#{$md-prefix}-toc-border: #3a3a3c;

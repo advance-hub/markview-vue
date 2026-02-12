@@ -160,11 +160,11 @@
   blockquote {
     margin: $md-quote-margin;
     padding: $md-quote-padding;
-    color: $md-quote-color;
+    color: var(--#{$md-prefix}-quote-text, #{$md-quote-color});
     font-size: $md-quote-font-size;
     line-height: $md-quote-line-height;
-    background: $md-quote-info-bg;
-    border-left: $md-quote-border-left-width solid $md-quote-info-border;
+    background: var(--#{$md-prefix}-quote-bg, #{$md-quote-info-bg});
+    border-left: $md-quote-border-left-width solid var(--#{$md-prefix}-quote-border, #{$md-quote-info-border});
     border-radius: $md-quote-border-radius;
 
     > *:first-child {
@@ -191,9 +191,9 @@
     font-size: $md-code-inline-font-size;
     font-family: $md-code-inline-font-family;
     font-weight: $md-code-inline-font-weight;
-    color: $md-code-inline-color;
-    background-color: $md-code-inline-bg;
-    border: 1px solid $md-code-inline-border;
+    color: var(--#{$md-prefix}-code-inline-color, var(--#{$md-prefix}-color-code-text, #{$md-code-inline-color}));
+    background-color: var(--#{$md-prefix}-code-inline-bg, var(--#{$md-prefix}-color-code-bg, #{$md-code-inline-bg}));
+    border: 1px solid var(--#{$md-prefix}-code-inline-border, var(--#{$md-prefix}-color-border, #{$md-code-inline-border}));
     border-radius: $md-code-inline-radius;
   }
 
@@ -230,27 +230,27 @@
     border-collapse: collapse;
     font-size: $md-table-font-size;
     line-height: $md-table-line-height;
-    background: $md-table-bg;
-    border: 1px solid $md-table-border;
+    background: var(--#{$md-prefix}-table-bg, #{$md-table-bg});
+    border: 1px solid var(--#{$md-prefix}-table-border, #{$md-table-border});
     border-radius: $md-table-radius;
     overflow: hidden;
 
     th, td {
       padding: $md-table-cell-padding;
       text-align: left;
-      border-bottom: 1px solid $md-table-border;
-      color: $md-table-color;
+      border-bottom: 1px solid var(--#{$md-prefix}-table-border, #{$md-table-border});
+      color: var(--#{$md-prefix}-color-text);
 
       &:not(:last-child) {
-        border-right: 1px solid $md-table-border;
+        border-right: 1px solid var(--#{$md-prefix}-table-border, #{$md-table-border});
       }
     }
 
     th {
       font-weight: $md-table-th-font-weight;
       font-size: $md-table-th-font-size;
-      color: $md-table-th-color;
-      background: $md-table-th-bg;
+      color: var(--#{$md-prefix}-color-text);
+      background: var(--#{$md-prefix}-table-header-bg, #{$md-table-th-bg});
     }
 
     tbody tr {
@@ -261,7 +261,7 @@
       }
 
       &:hover td {
-        background: $md-table-row-hover-bg;
+        background: var(--#{$md-prefix}-table-hover-bg, #{$md-table-row-hover-bg});
       }
     }
   }
@@ -300,7 +300,7 @@
     height: $md-hr-height;
     margin: $md-hr-margin;
     border: none;
-    background: $md-hr-bg;
+    background: var(--#{$md-prefix}-hr-bg, #{$md-hr-bg});
   }
 
   // 文本修饰
@@ -320,7 +320,8 @@
 
   mark {
     padding: 2px 4px;
-    background: rgba(255, 235, 59, 0.4);
+    background: var(--#{$md-prefix}-mark-bg, rgba(255, 235, 59, 0.4));
+    color: var(--#{$md-prefix}-color-text);
     border-radius: $radius-sm;
   }
 
@@ -359,6 +360,7 @@
     padding: $md-container-padding-y-mobile $md-container-padding-x-mobile;
     border-radius: $radius-lg;
     max-width: 100%;
+    overflow-x: hidden;
 
     h1 {
       font-size: $md-mobile-h1-font-size;
@@ -411,10 +413,71 @@
         margin-bottom: $spacing-2;
       }
     }
+
+    // 表格移动端：允许横向滚动，自适应宽度
+    table {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      font-size: $font-size-xs;
+
+      th, td {
+        padding: $spacing-2 $spacing-3;
+      }
+    }
+
+    // 代码块移动端：减小字号和内边距
+    pre code {
+      font-size: $font-size-xs;
+      padding: $spacing-3 $spacing-4;
+    }
+
+    // 引用块移动端
+    blockquote {
+      padding: $spacing-3 $spacing-4;
+      margin: $spacing-4 0;
+      border-radius: $radius-lg;
+    }
+
+    // 图片移动端：去掉阴影，减少间距，防止溢出
+    img {
+      border-radius: $radius-md;
+      box-shadow: none;
+      max-width: 100%;
+      height: auto;
+
+      &:hover {
+        box-shadow: none;
+      }
+    }
+
+    figure {
+      margin: $spacing-4 0;
+    }
+
+    // 分割线移动端
+    hr {
+      margin: $spacing-6 0;
+    }
   }
 
   @media (max-width: 480px) {
-    padding: $spacing-5 $spacing-4;
+    padding: $spacing-4 $spacing-3;
+
+    // 超小屏表格进一步缩小
+    table {
+      font-size: 11px;
+
+      th, td {
+        padding: $spacing-1 $spacing-2;
+      }
+    }
+
+    // 超小屏代码块
+    pre code {
+      font-size: 11px;
+      padding: $spacing-2 $spacing-3;
+    }
   }
 }
 
@@ -457,21 +520,21 @@
   }
   
   &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.15);
+    background: var(--#{$md-prefix}-scrollbar-thumb, rgba(0, 0, 0, 0.15));
     border-radius: 3px;
     
     &:hover {
-      background: rgba(0, 0, 0, 0.25);
+      background: var(--#{$md-prefix}-scrollbar-thumb-hover, rgba(0, 0, 0, 0.25));
     }
   }
   
   &::-webkit-scrollbar-track {
-    background: transparent;
+    background: var(--#{$md-prefix}-scrollbar-track, transparent);
   }
   
   // Firefox
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  scrollbar-color: var(--#{$md-prefix}-scrollbar-thumb, rgba(0, 0, 0, 0.15)) var(--#{$md-prefix}-scrollbar-track, transparent);
   
   // 固定高度模式下，TOC 不需要 sticky，因为容器本身会滚动
   .md-toc-sidebar {
@@ -490,14 +553,25 @@
 // 暗黑模式下的滚动条
 .#{$md-prefix}-render--dark.#{$md-prefix}-render--scrollable {
   &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--#{$md-prefix}-scrollbar-thumb, rgba(255, 255, 255, 0.2));
     
     &:hover {
-      background: rgba(255, 255, 255, 0.3);
+      background: var(--#{$md-prefix}-scrollbar-thumb-hover, rgba(255, 255, 255, 0.3));
     }
   }
   
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  scrollbar-color: var(--#{$md-prefix}-scrollbar-thumb, rgba(255, 255, 255, 0.2)) var(--#{$md-prefix}-scrollbar-track, transparent);
+}
+
+// 暗黑模式下全局滚动条（表格、代码块内部）
+.#{$md-prefix}-render--dark {
+  ::-webkit-scrollbar-thumb {
+    background: var(--#{$md-prefix}-scrollbar-thumb, rgba(255, 255, 255, 0.2));
+    
+    &:hover {
+      background: var(--#{$md-prefix}-scrollbar-thumb-hover, rgba(255, 255, 255, 0.3));
+    }
+  }
 }
 
 // ========================================
@@ -554,6 +628,26 @@
     right: 24px;
     width: 40px;
     height: 40px;
+  }
+
+  // 移动端布局改为纵向
+  .#{$md-prefix}-render-layout {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .#{$md-prefix}-render-back-top {
+    bottom: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 }
 

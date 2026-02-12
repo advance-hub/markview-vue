@@ -72,6 +72,7 @@
     <main class="pg__content">
       <MarkdownRender
         :raw="demoMd"
+        format="mdx"
         :theme="theme"
         :show-toc="showToc"
         :toc-mode="tocMode"
