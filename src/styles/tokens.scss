@@ -335,8 +335,15 @@ $md-btn-hover-bg: rgba(17, 17, 51, 0.08);
 $md-btn-icon-size: 16px;
 $md-btn-transition: $transition-fast;
 
+// 响应式断点
+$md-breakpoint-xs: 480px;   // 超小屏手机
+$md-breakpoint-sm: 640px;   // 小屏手机
+$md-breakpoint-md: 768px;   // 平板竖屏
+$md-breakpoint-lg: 1024px;  // 平板横屏 / 小笔记本（TOC 隐藏切换点）
+$md-breakpoint-xl: 1280px;  // 标准桌面
+
 // 移动端适配
-$md-mobile-breakpoint: 768px;
+$md-mobile-breakpoint: $md-breakpoint-md;
 $md-mobile-font-size: 14px;
 $md-mobile-h1-font-size: 26px;
 $md-mobile-h2-font-size: 22px;

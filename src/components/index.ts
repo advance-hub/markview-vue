@@ -61,7 +61,9 @@ export { default as Emphasis } from './Emphasis.vue';
 export { default as Delete } from './Delete.vue';
 export { default as Mark } from './Mark.vue';
 export { default as Container } from './Container.vue';
+export { default as Mermaid } from './Mermaid.vue';
 
 // TOC 目录组件
 export { default as Toc } from './Toc.vue';
+export { default as TocMobile } from './TocMobile.vue';
 export type { TocItem, TocProps } from './Toc.vue';

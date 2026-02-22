@@ -1,5 +1,8 @@
 <template>
-  <div class="md-code-block" :class="{ 'md-code-block--expanded': isExpanded }">
+  <!-- Mermaid 图表：检测到 mermaid 语言时渲染为图表 -->
+  <Mermaid v-if="isMermaid" :code="rawCode" />
+  <!-- 普通代码块 -->
+  <div v-else class="md-code-block" :class="{ 'md-code-block--expanded': isExpanded }">
     <BlockHeader :label="displayLanguage" copyable @copy="handleCopy">
       <template #extra v-if="isCollapsible">
         <button class="md-code-block__toggle" @click="handleToggle" :title="isExpanded ? '收起' : '展开'">
@@ -19,6 +22,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, useSlots, watch, inject } from 'vue';
 import BlockHeader from './BlockHeader.vue';
+import Mermaid from './Mermaid.vue';
 import { toast, Icon } from '../base';
 import { extractTextFromVNode, extractLanguageFromVNode, normalizeLanguage, trimCodeLines, copyToClipboard, highlightCode } from '../utils';
 import { MarkdownThemeKey } from '../injection-keys';
@@ -48,6 +52,8 @@ const isExpanded = ref(props.defaultExpanded);
 const themeMode = inject(MarkdownThemeKey, ref<'light' | 'dark'>('light'));
 
 const displayLanguage = computed(() => detectedLang.value || 'text');
+
+const isMermaid = computed(() => detectedLang.value === 'mermaid');
 
 const isCollapsible = computed(() => {
   if (props.collapsible === true) return true;

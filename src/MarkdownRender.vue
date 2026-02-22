@@ -3,6 +3,15 @@
     <div :class="layoutClass">
       <!-- 主内容区 -->
       <div ref="contentRef" class="md-render-content">
+        <!-- 移动端 TOC 触发按钮（≤1024px 显示） -->
+        <TocMobile
+          v-if="showToc && tocItems.length > 0"
+          :items="tocItems"
+          :active-id="activeId"
+          :min-level="tocMinLevel"
+          :max-level="tocMaxLevel"
+          @click="handleTocClick"
+        />
         <Skeleton v-if="isLoading" />
         <component v-else :is="mdxComponent" v-bind="{ components: mergedComponents }" />
       </div>
@@ -50,7 +59,7 @@ import * as runtime from 'vue/jsx-runtime';
 import type { PluggableList } from '@mdx-js/mdx/lib/core';
 import type { MDXProps } from 'mdx/types';
 import * as MarkdownComponents from './components';
-import { CodeBlock, Table, Blockquote, Container, ul, ol, hr, strong, em, del, Toc } from './components';
+import { CodeBlock, Table, Blockquote, Container, ul, ol, hr, strong, em, del, Toc, TocMobile } from './components';
 import { Skeleton, provideHeadingCollapse, generateHeadingId } from './base';
 import { preprocessContainers, loadLanguages } from './utils';
 import type { LangInput } from './utils/highlighter';

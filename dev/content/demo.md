@@ -876,6 +876,24 @@ Markview Vue 提供了完整的 Markdown 渲染解决方案，特性包括：
 
 项目采用现代化技术栈，注重性能优化和开发体验，适用于技术文档、博客系统、知识库等场景。
 
+## Mermaid 图表
+
+Markview Vue 支持 Mermaid 语法，可在 Markdown 中直接绘制流程图、时序图等。以下是 React Fiber 单元素 Reconcile 流程示例：
+
+```mermaid
+flowchart TD
+    Start["新 children 为单个元素"] --> HasKey{"key 是否相同？"}
+    HasKey -->|"不同"| Delete["删除旧 Fiber，创建新 Fiber"]
+    HasKey -->|"相同"| HasType{"type 是否相同？"}
+    HasType -->|"不同"| Delete2["删除旧 Fiber 及所有兄弟，创建新 Fiber"]
+    HasType -->|"相同"| Reuse["复用旧 Fiber，更新 props"]
+
+    style Start fill:#E3F2FD,stroke:#1565C0,color:#000
+    style Reuse fill:#C8E6C9,stroke:#2E7D32,color:#000
+    style Delete fill:#FFCDD2,stroke:#C62828,color:#000
+    style Delete2 fill:#FFCDD2,stroke:#C62828,color:#000
+```
+
 ---
 
 **文档版本：** v0.1.3  

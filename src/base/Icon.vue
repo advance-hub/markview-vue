@@ -15,7 +15,7 @@ import {
   Expand, Shrink, Maximize2, Minimize2,
   RotateCw, RotateCcw, ZoomIn, ZoomOut, RefreshCw, Download, ExternalLink,
   CheckCircle, AlertCircle, AlertTriangle, Info, Lightbulb,
-  Code, Table, Quote, Image, Link,
+  Code, Code2, Table, Quote, Image, Link, Eye,
 } from 'lucide-vue-next';
 
 const iconMap = {
@@ -46,6 +46,8 @@ const iconMap = {
   info: Info,
   lightbulb: Lightbulb,
   code: Code,
+  'code-2': Code2,
+  eye: Eye,
   table: Table,
   quote: Quote,
   image: Image,

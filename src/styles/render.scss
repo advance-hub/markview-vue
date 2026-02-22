@@ -12,14 +12,16 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   
-  // 容器
-  max-width: $md-container-max-width;
+  // 容器 - 流式布局，宽度由外部容器决定
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   padding: $md-container-padding-y $md-container-padding-x;
   background-color: $md-container-bg;
   border-radius: $md-container-radius;
   box-shadow: $md-container-shadow;
-  min-height: 400px;
+  min-height: 200px;
+  box-sizing: border-box;
 
   // 标题通用样式
   h1, h2, h3, h4, h5, h6 {
@@ -353,13 +355,25 @@
     color: var(--#{$md-prefix}-color-text-secondary);
   }
 
-  // 移动端适配
-  @media (max-width: $md-mobile-breakpoint) {
+  // ========================================
+  // 响应式 - 平板横屏 / 小笔记本 (≤1024px)
+  // TOC 隐藏，内容区独占全宽
+  // ========================================
+  @media (max-width: $md-breakpoint-lg) {
+    padding: $spacing-8 $spacing-8;
+
+    h1 { font-size: 28px; margin-top: $spacing-6; margin-bottom: $spacing-5; }
+    h2 { font-size: 22px; margin-top: $spacing-6; margin-bottom: $spacing-4; }
+  }
+
+  // ========================================
+  // 响应式 - 平板竖屏 (≤768px)
+  // ========================================
+  @media (max-width: $md-breakpoint-md) {
     font-size: $md-mobile-font-size;
     line-height: $line-height-normal;
     padding: $md-container-padding-y-mobile $md-container-padding-x-mobile;
     border-radius: $radius-lg;
-    max-width: 100%;
     overflow-x: hidden;
 
     h1 {
@@ -414,7 +428,7 @@
       }
     }
 
-    // 表格移动端：允许横向滚动，自适应宽度
+    // 表格移动端：允许横向滚动
     table {
       display: block;
       overflow-x: auto;
@@ -426,7 +440,7 @@
       }
     }
 
-    // 代码块移动端：减小字号和内边距
+    // 代码块移动端
     pre code {
       font-size: $font-size-xs;
       padding: $spacing-3 $spacing-4;
@@ -439,7 +453,7 @@
       border-radius: $radius-lg;
     }
 
-    // 图片移动端：去掉阴影，减少间距，防止溢出
+    // 图片移动端
     img {
       border-radius: $radius-md;
       box-shadow: none;
@@ -455,16 +469,35 @@
       margin: $spacing-4 0;
     }
 
-    // 分割线移动端
     hr {
       margin: $spacing-6 0;
     }
   }
 
-  @media (max-width: 480px) {
-    padding: $spacing-4 $spacing-3;
+  // ========================================
+  // 响应式 - 小屏手机 (≤640px)
+  // ========================================
+  @media (max-width: $md-breakpoint-sm) {
+    padding: $spacing-5 $spacing-4;
+    font-size: 14px;
+    border-radius: $radius-md;
 
-    // 超小屏表格进一步缩小
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; }
+    h3 { font-size: 18px; }
+  }
+
+  // ========================================
+  // 响应式 - 超小屏手机 (≤480px)
+  // ========================================
+  @media (max-width: $md-breakpoint-xs) {
+    padding: $spacing-4 $spacing-3;
+    font-size: 13px;
+
+    h1 { font-size: 22px; }
+    h2 { font-size: 19px; }
+    h3 { font-size: 17px; }
+
     table {
       font-size: 11px;
 
@@ -473,7 +506,6 @@
       }
     }
 
-    // 超小屏代码块
     pre code {
       font-size: 11px;
       padding: $spacing-2 $spacing-3;
@@ -505,6 +537,7 @@
 .#{$md-prefix}-render-content {
   flex: 1;
   min-width: 0;
+  max-width: 100%;
 }
 
 // ========================================
@@ -620,24 +653,26 @@
 }
 
 // ========================================
-// 响应式
+// 响应式 - 布局层
 // ========================================
-@media (max-width: 768px) {
+
+// ≤1024px: TOC 隐藏，布局改为单列
+@media (max-width: $md-breakpoint-lg) {
+  .#{$md-prefix}-render-layout {
+    display: block;
+  }
+}
+
+@media (max-width: $md-breakpoint-md) {
   .#{$md-prefix}-render-back-top {
     bottom: 24px;
     right: 24px;
     width: 40px;
     height: 40px;
   }
-
-  // 移动端布局改为纵向
-  .#{$md-prefix}-render-layout {
-    flex-direction: column;
-    gap: 16px;
-  }
 }
 
-@media (max-width: 480px) {
+@media (max-width: $md-breakpoint-xs) {
   .#{$md-prefix}-render-back-top {
     bottom: 16px;
     right: 16px;
@@ -649,10 +684,4 @@
       height: 16px;
     }
   }
-}
-
-
-.md-render {
-  width: 100%!important;
-  max-width: 100%!important;
 }
