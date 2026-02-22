@@ -77,6 +77,18 @@ async function renderMermaid() {
       theme: themeMode.value === 'dark' ? 'dark' : 'default',
       securityLevel: 'loose',
       fontFamily: 'inherit',
+      maxTextSize: 100000,
+      flowchart: {
+        htmlLabels: true,
+        nodeSpacing: 30,
+        rankSpacing: 40,
+        padding: 15,
+        useMaxWidth: true,
+        wrappingWidth: 200,
+      },
+      sequence: {
+        useMaxWidth: true,
+      },
     });
 
     const id = generateId();
